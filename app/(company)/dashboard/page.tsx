@@ -34,6 +34,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (statusQuery.data) {
+      console.log("Onboarding status:", statusQuery.data);
       if (statusQuery.data.type === "medical_staff") {
         router.push("/medical");
         return;

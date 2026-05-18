@@ -1,22 +1,22 @@
-import { z } from "zod";
-import { companyAdminProcedure } from "@/server/middleware/roles";
-import { database } from "@/db";
-import { employeesTable, user } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { ORPCError } from "@orpc/server";
+import { z } from 'zod';
+import { companyAdminProcedure } from '@/server/middleware/roles';
+import { database } from '@/db';
+import { employeesTable, user } from '@/db/schema/global';
+import { eq } from 'drizzle-orm';
+import { ORPCError } from '@orpc/server';
 
 export const createEmployee = companyAdminProcedure
   .input(
     z.object({
       email: z.string().email(),
       position: z.string().max(255).optional(),
-      role: z.enum(["company_admin", "employee"]).default("employee"),
-    })
+      role: z.enum(['company_admin', 'employee']).default('employee'),
+    }),
   )
   .handler(async ({ input, context }) => {
     if (!context.clientCompany) {
-      throw new ORPCError("NOT_FOUND", {
-        message: "Company not found",
+      throw new ORPCError('NOT_FOUND', {
+        message: 'Company not found',
       });
     }
 
@@ -25,8 +25,9 @@ export const createEmployee = companyAdminProcedure
     });
 
     if (!existingUser) {
-      throw new ORPCError("NOT_FOUND", {
-        message: "User not found. Please ask the employee to create an account first.",
+      throw new ORPCError('NOT_FOUND', {
+        message:
+          'User not found. Please ask the employee to create an account first.',
       });
     }
 
@@ -35,8 +36,8 @@ export const createEmployee = companyAdminProcedure
     });
 
     if (existingEmployee) {
-      throw new ORPCError("BAD_REQUEST", {
-        message: "This user is already associated with a company",
+      throw new ORPCError('BAD_REQUEST', {
+        message: 'This user is already associated with a company',
       });
     }
 
@@ -52,4 +53,3 @@ export const createEmployee = companyAdminProcedure
 
     return employee;
   });
-

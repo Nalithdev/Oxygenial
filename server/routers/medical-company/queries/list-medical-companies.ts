@@ -1,8 +1,8 @@
-import { z } from "zod";
-import { publicProcedure } from "@/server/middleware/auth";
-import { database } from "@/db";
-import { medicalCompaniesTable } from "@/db/schema";
-import { like, or, sql } from "drizzle-orm";
+import { z } from 'zod';
+import { publicProcedure } from '@/server/middleware/auth';
+import { database } from '@/db';
+import { medicalCompaniesTable } from '@/db/schema/global';
+import { like, or, sql } from 'drizzle-orm';
 
 export const listMedicalCompanies = publicProcedure
   .input(
@@ -12,7 +12,7 @@ export const listMedicalCompanies = publicProcedure
       sector: z.string().optional(),
       limit: z.number().min(1).max(100).default(20),
       offset: z.number().min(0).default(0),
-    })
+    }),
   )
   .handler(async ({ input }) => {
     const conditions = [];
@@ -23,8 +23,8 @@ export const listMedicalCompanies = publicProcedure
         or(
           like(medicalCompaniesTable.name, searchTerm),
           like(medicalCompaniesTable.city, searchTerm),
-          like(medicalCompaniesTable.description, searchTerm)
-        )
+          like(medicalCompaniesTable.description, searchTerm),
+        ),
       );
     }
 
@@ -32,8 +32,11 @@ export const listMedicalCompanies = publicProcedure
       conditions.push(
         or(
           like(medicalCompaniesTable.postalCode, `${input.postalCode}%`),
-          like(medicalCompaniesTable.coveragePostalCodes, `%${input.postalCode}%`)
-        )
+          like(
+            medicalCompaniesTable.coveragePostalCodes,
+            `%${input.postalCode}%`,
+          ),
+        ),
       );
     }
 
@@ -41,7 +44,10 @@ export const listMedicalCompanies = publicProcedure
       conditions.push(like(medicalCompaniesTable.sectors, `%${input.sector}%`));
     }
 
-    const whereClause = conditions.length > 0 ? sql`${conditions.reduce((acc, cond) => sql`${acc} AND ${cond}`)}` : undefined;
+    const whereClause =
+      conditions.length > 0
+        ? sql`${conditions.reduce((acc, cond) => sql`${acc} AND ${cond}`)}`
+        : undefined;
 
     const companies = await database
       .select()
@@ -52,4 +58,3 @@ export const listMedicalCompanies = publicProcedure
 
     return companies;
   });
-

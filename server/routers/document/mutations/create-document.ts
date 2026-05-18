@@ -1,9 +1,9 @@
-import { z } from "zod";
-import { medicalStaffProcedure } from "@/server/middleware/roles";
-import { database } from "@/db";
-import { documentsTable, employeesTable } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { ORPCError } from "@orpc/server";
+import { z } from 'zod';
+import { medicalStaffProcedure } from '@/server/middleware/roles';
+import { database } from '@/db';
+import { documentsTable, employeesTable } from '@/db/schema/global';
+import { eq } from 'drizzle-orm';
+import { ORPCError } from '@orpc/server';
 
 export const createDocument = medicalStaffProcedure
   .input(
@@ -12,12 +12,12 @@ export const createDocument = medicalStaffProcedure
       name: z.string().min(1).max(255),
       type: z.string().max(100).optional(),
       url: z.string().url().max(500),
-    })
+    }),
   )
   .handler(async ({ input, context }) => {
     if (!context.medicalCompany) {
-      throw new ORPCError("NOT_FOUND", {
-        message: "Medical company not found",
+      throw new ORPCError('NOT_FOUND', {
+        message: 'Medical company not found',
       });
     }
 
@@ -29,14 +29,16 @@ export const createDocument = medicalStaffProcedure
     });
 
     if (!employee) {
-      throw new ORPCError("NOT_FOUND", {
-        message: "Employee not found",
+      throw new ORPCError('NOT_FOUND', {
+        message: 'Employee not found',
       });
     }
 
-    if (employee.clientCompany?.medicalCompanyId !== context.medicalCompany.id) {
-      throw new ORPCError("FORBIDDEN", {
-        message: "This employee does not belong to your medical service",
+    if (
+      employee.clientCompany?.medicalCompanyId !== context.medicalCompany.id
+    ) {
+      throw new ORPCError('FORBIDDEN', {
+        message: 'This employee does not belong to your medical service',
       });
     }
 
@@ -52,4 +54,3 @@ export const createDocument = medicalStaffProcedure
 
     return document;
   });
-

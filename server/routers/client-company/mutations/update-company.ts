@@ -1,9 +1,9 @@
-import { z } from "zod";
-import { companyAdminProcedure } from "@/server/middleware/roles";
-import { database } from "@/db";
-import { clientCompaniesTable } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { ORPCError } from "@orpc/server";
+import { z } from 'zod';
+import { companyAdminProcedure } from '@/server/middleware/roles';
+import { database } from '@/db';
+import { clientCompaniesTable } from '@/db/schema/global';
+import { eq } from 'drizzle-orm';
+import { ORPCError } from '@orpc/server';
 
 export const updateCompany = companyAdminProcedure
   .input(
@@ -15,12 +15,12 @@ export const updateCompany = companyAdminProcedure
       city: z.string().max(255).optional(),
       sector: z.string().max(255).optional(),
       employeeCount: z.number().min(1).optional(),
-    })
+    }),
   )
   .handler(async ({ input, context }) => {
     if (!context.clientCompany) {
-      throw new ORPCError("NOT_FOUND", {
-        message: "Company not found",
+      throw new ORPCError('NOT_FOUND', {
+        message: 'Company not found',
       });
     }
 
@@ -35,4 +35,3 @@ export const updateCompany = companyAdminProcedure
 
     return company;
   });
-

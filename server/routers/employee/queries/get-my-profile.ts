@@ -1,8 +1,8 @@
-import { employeeProcedure } from "@/server/middleware/roles";
-import { database } from "@/db";
-import { employeesTable } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { ORPCError } from "@orpc/server";
+import { employeeProcedure } from '@/server/middleware/roles';
+import { database } from '@/db';
+import { employeesTable } from '@/db/schema/global';
+import { eq } from 'drizzle-orm';
+import { ORPCError } from '@orpc/server';
 
 export const getMyProfile = employeeProcedure.handler(async ({ context }) => {
   const employee = await database.query.employeesTable.findFirst({
@@ -27,11 +27,10 @@ export const getMyProfile = employeeProcedure.handler(async ({ context }) => {
   });
 
   if (!employee) {
-    throw new ORPCError("NOT_FOUND", {
-      message: "Profile not found",
+    throw new ORPCError('NOT_FOUND', {
+      message: 'Profile not found',
     });
   }
 
   return employee;
 });
-
