@@ -1,38 +1,17 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "motion/react";
-import { orpc } from "@/lib/orpc-client";
 import { verticalFadeIn } from "@/lib/animations";
 import { CompanyDetailsStep } from "./_components/company-details-step";
 import { SearchMedicalStep } from "./_components/search-medical-step";
 import { PendingRequestStep } from "./_components/pending-request-step";
+import { useOnboarding } from "../hooks/useOnboarding";
 
 type OnboardingStep = "company_details" | "search_medical" | "pending_request" | "completed";
 
 export default function OnboardingPage() {
-  const router = useRouter();
-  const queryClient = useQueryClient();
 
-  const statusQuery = useQuery(
-    orpc.onboarding.getStatus.queryOptions({})
-  );
-
-  useEffect(() => {
-    if (statusQuery.data) {
-      if (statusQuery.data.type === "medical_staff") {
-        router.push("/medical");
-        return;
-      }
-
-      if (statusQuery.data.onboardingStatus === "completed") {
-        router.push("/dashboard");
-        return;
-      }
-    }
-  }, [statusQuery.data, router]);
+  const { statusQuery, queryClient } = useOnboarding();
 
   if (statusQuery.isPending) {
     return (
@@ -64,11 +43,10 @@ export default function OnboardingPage() {
             {["company_details", "search_medical", "pending_request"].map((step, index) => (
               <div
                 key={step}
-                className={`h-2 w-16 rounded-full transition-colors ${
-                  getStepIndex(currentStep) >= index
+                className={`h-2 w-16 rounded-full transition-colors ${getStepIndex(currentStep) >= index
                     ? "bg-blue-600"
                     : "bg-slate-200"
-                }`}
+                  }`}
               />
             ))}
           </div>
