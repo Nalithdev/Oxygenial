@@ -1,10 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
 import { motion } from "motion/react";
 import { Building2 } from "lucide-react";
-import { orpcClient } from "@/lib/orpc-client";
 import { verticalFadeIn } from "@/lib/animations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useCompanyDetails } from "../../hooks/useCompanyDetails";
 
 const SECTORS = [
   "Agriculture",
@@ -36,48 +34,8 @@ interface CompanyDetailsStepProps {
 }
 
 export function CompanyDetailsStep({ onSuccess }: CompanyDetailsStepProps) {
-  const [formData, setFormData] = useState({
-    name: "",
-    siret: "",
-    address: "",
-    postalCode: "",
-    city: "",
-    sector: "",
-    employeeCount: "",
-  });
-  const [error, setError] = useState<string | null>(null);
 
-  const createCompanyMutation = useMutation({
-    mutationFn: async () => {
-      return orpcClient.clientCompany.create({
-        name: formData.name,
-        siret: formData.siret || undefined,
-        address: formData.address || undefined,
-        postalCode: formData.postalCode || undefined,
-        city: formData.city || undefined,
-        sector: formData.sector || undefined,
-        employeeCount: formData.employeeCount ? parseInt(formData.employeeCount) : undefined,
-      });
-    },
-    onSuccess: () => {
-      onSuccess();
-    },
-    onError: (error: Error) => {
-      setError(error.message);
-    },
-  });
-
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError(null);
-
-    if (!formData.name.trim()) {
-      setError("Le nom de l'entreprise est requis");
-      return;
-    }
-
-    createCompanyMutation.mutate();
-  }
+  const { handleSubmit, error, formData, setFormData, createCompanyMutation } = useCompanyDetails(onSuccess);
 
   return (
     <motion.div
