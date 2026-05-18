@@ -17,7 +17,7 @@
     "db:seed": "npx tsx scripts/seed.ts"
   },
   "dependencies": {
-    "@orpc/client": "^1.12.2",
+    "@orpc/client": "^1.14.3",
     "@orpc/server": "^1.12.2",
     "@orpc/tanstack-query": "^1.12.2",
     "@radix-ui/react-alert-dialog": "^1.1.15",
@@ -30,14 +30,14 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tabs": "^1.1.13",
     "@tanstack/react-query": "^5.90.12",
-    "better-auth": "^1.4.6",
+    "better-auth": "1.4.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.3",
-    "drizzle-orm": "^0.45.1",
+    "drizzle-orm": "^0.45.2",
     "lucide-react": "^0.561.0",
     "motion": "^12.23.26",
-    "next": "16.0.10",
+    "next": "16.2.6",
     "pg": "^8.16.3",
     "react": "19.2.1",
     "react-dom": "19.2.1",
@@ -46,18 +46,25 @@
   },
   "devDependencies": {
     "@better-auth/cli": "^1.4.6",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/node": "^20.19.26",
     "@types/pg": "^8.16.0",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "baseline-browser-mapping": "^2.9.19",
-    "concurrently": "^9.1.2",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "baseline-browser-mapping": "^2.10.30",
+    "concurrently": "^9.2.1",
     "drizzle-kit": "^0.31.8",
-    "eslint": "^9",
-    "eslint-config-next": "16.0.10",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "16.2.6",
     "shadcn": "^3.5.2",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5.9.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "lodash": "4.17.24",
+      "postcss": "8.5.10",
+      "better-call": "1.1.8"
+    }
   }
 }
