@@ -1,16 +1,16 @@
-import { z } from "zod";
-import { medicalStaffProcedure } from "@/server/middleware/roles";
-import { database } from "@/db";
-import { employeesTable } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { ORPCError } from "@orpc/server";
+import { z } from 'zod';
+import { medicalStaffProcedure } from '@/server/middleware/roles';
+import { database } from '@/db';
+import { employeesTable } from '@/db/schema/global';
+import { eq } from 'drizzle-orm';
+import { ORPCError } from '@orpc/server';
 
 export const getClientEmployee = medicalStaffProcedure
   .input(z.object({ employeeId: z.number() }))
   .handler(async ({ input, context }) => {
     if (!context.medicalCompany) {
-      throw new ORPCError("NOT_FOUND", {
-        message: "Medical company not found",
+      throw new ORPCError('NOT_FOUND', {
+        message: 'Medical company not found',
       });
     }
 
@@ -20,7 +20,8 @@ export const getClientEmployee = medicalStaffProcedure
         user: true,
         clientCompany: true,
         bookings: {
-          where: (bookings, { eq }) => eq(bookings.medicalCompanyId, context.medicalCompany!.id),
+          where: (bookings, { eq }) =>
+            eq(bookings.medicalCompanyId, context.medicalCompany!.id),
           orderBy: (bookings, { desc }) => [desc(bookings.scheduledAt)],
         },
         documents: {
@@ -30,17 +31,18 @@ export const getClientEmployee = medicalStaffProcedure
     });
 
     if (!employee) {
-      throw new ORPCError("NOT_FOUND", {
-        message: "Employee not found",
+      throw new ORPCError('NOT_FOUND', {
+        message: 'Employee not found',
       });
     }
 
-    if (employee.clientCompany?.medicalCompanyId !== context.medicalCompany.id) {
-      throw new ORPCError("FORBIDDEN", {
-        message: "This employee does not belong to your medical service",
+    if (
+      employee.clientCompany?.medicalCompanyId !== context.medicalCompany.id
+    ) {
+      throw new ORPCError('FORBIDDEN', {
+        message: 'This employee does not belong to your medical service',
       });
     }
 
     return employee;
   });
-

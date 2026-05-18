@@ -1,9 +1,9 @@
-import { z } from "zod";
-import { companyAdminProcedure } from "@/server/middleware/roles";
-import { database } from "@/db";
-import { bookingsTable, employeesTable } from "@/db/schema";
-import { eq, and, gte, desc } from "drizzle-orm";
-import { ORPCError } from "@orpc/server";
+import { z } from 'zod';
+import { companyAdminProcedure } from '@/server/middleware/roles';
+import { database } from '@/db';
+import { bookingsTable, employeesTable } from '@/db/schema/global';
+import { eq, and, gte, desc } from 'drizzle-orm';
+import { ORPCError } from '@orpc/server';
 
 export const listBookings = companyAdminProcedure
   .input(
@@ -12,12 +12,12 @@ export const listBookings = companyAdminProcedure
       upcoming: z.boolean().optional(),
       limit: z.number().min(1).max(100).default(20),
       offset: z.number().min(0).default(0),
-    })
+    }),
   )
   .handler(async ({ input, context }) => {
     if (!context.clientCompany) {
-      throw new ORPCError("NOT_FOUND", {
-        message: "Company not found",
+      throw new ORPCError('NOT_FOUND', {
+        message: 'Company not found',
       });
     }
 
@@ -35,8 +35,8 @@ export const listBookings = companyAdminProcedure
 
     if (input.employeeId) {
       if (!employeeIds.includes(input.employeeId)) {
-        throw new ORPCError("FORBIDDEN", {
-          message: "Employee does not belong to your company",
+        throw new ORPCError('FORBIDDEN', {
+          message: 'Employee does not belong to your company',
         });
       }
       conditions.push(eq(bookingsTable.employeeId, input.employeeId));
@@ -63,4 +63,3 @@ export const listBookings = companyAdminProcedure
 
     return bookings.filter((b) => employeeIds.includes(b.employeeId));
   });
-

@@ -1,9 +1,13 @@
-import { z } from "zod";
-import { authenticatedProcedure } from "@/server/middleware/auth";
-import { database } from "@/db";
-import { medicalCompaniesTable, medicalStaffTable, employeesTable } from "@/db/schema";
-import { ORPCError } from "@orpc/server";
-import { eq } from "drizzle-orm";
+import { z } from 'zod';
+import { authenticatedProcedure } from '@/server/middleware/auth';
+import { database } from '@/db';
+import {
+  medicalCompaniesTable,
+  medicalStaffTable,
+  employeesTable,
+} from '@/db/schema/global';
+import { ORPCError } from '@orpc/server';
+import { eq } from 'drizzle-orm';
 
 export const createMedicalCompany = authenticatedProcedure
   .input(
@@ -18,16 +22,17 @@ export const createMedicalCompany = authenticatedProcedure
       website: z.string().max(255).optional(),
       sectors: z.string().optional(),
       coveragePostalCodes: z.string().optional(),
-    })
+    }),
   )
   .handler(async ({ input, context }) => {
-    const existingMedicalStaff = await database.query.medicalStaffTable.findFirst({
-      where: eq(medicalStaffTable.userId, context.user.id),
-    });
+    const existingMedicalStaff =
+      await database.query.medicalStaffTable.findFirst({
+        where: eq(medicalStaffTable.userId, context.user.id),
+      });
 
     if (existingMedicalStaff) {
-      throw new ORPCError("BAD_REQUEST", {
-        message: "You are already associated with a medical company",
+      throw new ORPCError('BAD_REQUEST', {
+        message: 'You are already associated with a medical company',
       });
     }
 
@@ -36,8 +41,8 @@ export const createMedicalCompany = authenticatedProcedure
     });
 
     if (existingEmployee) {
-      throw new ORPCError("BAD_REQUEST", {
-        message: "You are already associated with a client company",
+      throw new ORPCError('BAD_REQUEST', {
+        message: 'You are already associated with a client company',
       });
     }
 
@@ -60,9 +65,8 @@ export const createMedicalCompany = authenticatedProcedure
     await database.insert(medicalStaffTable).values({
       userId: context.user.id,
       medicalCompanyId: medicalCompany.id,
-      role: "admin",
+      role: 'admin',
     });
 
     return medicalCompany;
   });
-

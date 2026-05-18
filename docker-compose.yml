@@ -3,11 +3,11 @@ services:
     image: postgres:17
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - '5432:5432'
     environment:
-      POSTGRES_USER: devlab
-      POSTGRES_PASSWORD: devlab
-      POSTGRES_DB: devlab
+      POSTGRES_USER: oxygenial
+      POSTGRES_PASSWORD: oxygenial
+      POSTGRES_DB: oxygenial
     volumes:
       - postgres_data:/var/lib/postgresql/data
 

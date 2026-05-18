@@ -1,11 +1,8 @@
-import { ORPCError } from "@orpc/server";
-import { eq } from "drizzle-orm";
-import { authenticatedProcedure } from "./auth";
-import { database } from "@/db";
-import {
-  employeesTable,
-  medicalStaffTable,
-} from "@/db/schema";
+import { ORPCError } from '@orpc/server';
+import { eq } from 'drizzle-orm';
+import { authenticatedProcedure } from './auth';
+import { database } from '@/db';
+import { employeesTable, medicalStaffTable } from '@/db/schema/global';
 
 export const medicalStaffProcedure = authenticatedProcedure.use(
   async ({ context, next }) => {
@@ -17,8 +14,8 @@ export const medicalStaffProcedure = authenticatedProcedure.use(
     });
 
     if (!medicalStaff) {
-      throw new ORPCError("FORBIDDEN", {
-        message: "You are not associated with any medical organization",
+      throw new ORPCError('FORBIDDEN', {
+        message: 'You are not associated with any medical organization',
       });
     }
 
@@ -28,21 +25,21 @@ export const medicalStaffProcedure = authenticatedProcedure.use(
         medicalCompany: medicalStaff.medicalCompany,
       },
     });
-  }
+  },
 );
 
 export const medicalAdminProcedure = medicalStaffProcedure.use(
   async ({ context, next }) => {
-    if (context.medicalStaff.role !== "admin") {
-      throw new ORPCError("FORBIDDEN", {
-        message: "You must be a medical admin to access this resource",
+    if (context.medicalStaff.role !== 'admin') {
+      throw new ORPCError('FORBIDDEN', {
+        message: 'You must be a medical admin to access this resource',
       });
     }
 
     return next({
       context: {},
     });
-  }
+  },
 );
 
 export const companyAdminProcedure = authenticatedProcedure.use(
@@ -55,14 +52,14 @@ export const companyAdminProcedure = authenticatedProcedure.use(
     });
 
     if (!employee) {
-      throw new ORPCError("FORBIDDEN", {
-        message: "You are not associated with any company",
+      throw new ORPCError('FORBIDDEN', {
+        message: 'You are not associated with any company',
       });
     }
 
-    if (employee.role !== "company_admin") {
-      throw new ORPCError("FORBIDDEN", {
-        message: "You must be a company admin to access this resource",
+    if (employee.role !== 'company_admin') {
+      throw new ORPCError('FORBIDDEN', {
+        message: 'You must be a company admin to access this resource',
       });
     }
 
@@ -72,7 +69,7 @@ export const companyAdminProcedure = authenticatedProcedure.use(
         clientCompany: employee.clientCompany,
       },
     });
-  }
+  },
 );
 
 export const employeeProcedure = authenticatedProcedure.use(
@@ -85,8 +82,8 @@ export const employeeProcedure = authenticatedProcedure.use(
     });
 
     if (!employee) {
-      throw new ORPCError("FORBIDDEN", {
-        message: "You are not registered as an employee",
+      throw new ORPCError('FORBIDDEN', {
+        message: 'You are not registered as an employee',
       });
     }
 
@@ -96,5 +93,5 @@ export const employeeProcedure = authenticatedProcedure.use(
         clientCompany: employee.clientCompany,
       },
     });
-  }
+  },
 );
