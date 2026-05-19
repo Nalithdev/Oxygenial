@@ -29,11 +29,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DashboardLayout } from "../dashboard/_components/dashboard-layout";
+import {useSession} from "@/lib/auth-client";
 
 export default function EmployeesPage() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+    const { data: session } = useSession();
+
+    const userId = session?.user?.id;
   const [newEmployee, setNewEmployee] = useState({
     email: "",
     position: "",
@@ -65,6 +69,13 @@ export default function EmployeesPage() {
       setError(error.message);
     },
   });
+
+    const currentUserEmployeeQuery = useQuery(
+        orpc.employee.get_by_userId.queryOptions({
+            input: { id: userId! },
+            enabled: !!userId,
+        })
+    );
 
   const filteredEmployees = employeesQuery.data?.filter((employee) => {
     if (!search) return true;
@@ -182,56 +193,65 @@ export default function EmployeesPage() {
         </motion.div>
 
         <motion.div variants={verticalFadeIn}>
-          {employeesQuery.isPending ? (
-            <div className="flex justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
-            </div>
-          ) : filteredEmployees?.length === 0 ? (
-            <Card className="border-slate-200">
-              <CardContent className="py-12 text-center">
-                <Users className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                <p className="text-slate-500">Aucun employé trouvé</p>
-              </CardContent>
-            </Card>
-          ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredEmployees?.map((employee) => (
-                <Link key={employee.id} href={`/employee/${employee.id}`}>
-                  <Card className="border-slate-200 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer h-full">
-                    <CardContent className="pt-6">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white text-lg font-medium shrink-0">
-                          {employee.user?.name?.charAt(0).toUpperCase()}
+                {filteredEmployees?.map((employee) => {
+                    const isAdmin = currentUserEmployeeQuery.data?.role === "company_admin";
+                    const isClickable = isAdmin;
+
+                    const content = (
+                        <Card className="border-slate-200 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer h-full">
+                            <CardContent className="pt-6">
+                                <div className="flex items-start gap-4">
+                                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white text-lg font-medium shrink-0">
+                                        {employee.user?.name?.charAt(0).toUpperCase()}
+                                    </div>
+
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="font-semibold text-slate-900 truncate">
+                                                {employee.user?.name}
+                                            </h3>
+
+                                            <Badge variant="outline" className="shrink-0">
+                                                {employee.role === "company_admin"
+                                                    ? "Administrateur"
+                                                    : "Employé"}
+                                            </Badge>
+                                        </div>
+
+                                        <div className="mt-2 space-y-1">
+                                            <p className="text-sm text-slate-500 flex items-center gap-1.5 truncate">
+                                                <Mail className="w-3.5 h-3.5" />
+                                                {employee.user?.email}
+                                            </p>
+
+                                            {employee.position && (
+                                                <p className="text-sm text-slate-500 flex items-center gap-1.5">
+                                                    <Briefcase className="w-3.5 h-3.5" />
+                                                    {employee.position}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    );
+
+                    return isClickable ? (
+                        <Link
+                            key={employee.id}
+                            href={`/employee/${employee.id}`}
+                        >
+                            {content}
+                        </Link>
+                    ) : (
+                        <div key={employee.id}>
+                            {content}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-semibold text-slate-900 truncate">
-                              {employee.user?.name}
-                            </h3>
-                            <Badge variant="outline" className="shrink-0">
-                              {employee.role === "company_admin" ? "Admin" : "Employé"}
-                            </Badge>
-                          </div>
-                          <div className="mt-2 space-y-1">
-                            <p className="text-sm text-slate-500 flex items-center gap-1.5 truncate">
-                              <Mail className="w-3.5 h-3.5" />
-                              {employee.user?.email}
-                            </p>
-                            {employee.position && (
-                              <p className="text-sm text-slate-500 flex items-center gap-1.5">
-                                <Briefcase className="w-3.5 h-3.5" />
-                                {employee.position}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+                    );
+                })}
             </div>
-          )}
         </motion.div>
       </motion.div>
     </DashboardLayout>
