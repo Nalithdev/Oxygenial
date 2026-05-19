@@ -5,8 +5,12 @@ import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
 import { verticalFadeIn } from "@/lib/animations";
 import { Stethoscope } from "lucide-react";
+import { signOut, useSession } from "@/lib/auth-client";
 
 export function Navbar() {
+
+  const { data: session } = useSession();
+
   return (
     <motion.nav
       initial="initial"
@@ -36,14 +40,27 @@ export function Navbar() {
         </Link>
       </div>
 
-      <div className="flex items-center gap-4">
-        <Button asChild variant="ghost" size="sm">
-          <Link href="/sign-in">Se connecter</Link>
-        </Button>
-        <Button asChild size="sm">
-          <Link href="/sign-up">Créer mon compte</Link>
-        </Button>
-      </div>
+      {session?.user?.name ?
+        <div className="flex items-center gap-4">
+          <Button asChild variant="ghost" size="sm">
+            <Link href="/medical/requests">Dashboard</Link>
+          </Button>
+          <Button onClick={() => signOut()} asChild variant="ghost" size="sm">
+            <p className="cursor-pointer">Se déconnecter</p>
+          </Button>
+        </div>
+        :
+
+        <div className="flex items-center gap-4">
+          <Button asChild variant="ghost" size="sm">
+            <Link href="/sign-in">Se connecter</Link>
+          </Button>
+          <Button asChild size="sm">
+            <Link href="/sign-up">Créer mon compte</Link>
+          </Button>
+        </div>
+      }
+
     </motion.nav>
   );
 }
