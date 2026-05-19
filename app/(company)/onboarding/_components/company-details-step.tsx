@@ -74,54 +74,59 @@ export function CompanyDetailsStep({ onSuccess }: CompanyDetailsStepProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="siret">SIRET</Label>
+              <Label htmlFor="siret">SIRET *</Label>
               <Input
                 id="siret"
                 value={formData.siret}
                 onChange={(e) => setFormData({ ...formData, siret: e.target.value })}
                 placeholder="12345678901234"
                 maxLength={14}
+                required
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="postalCode">Code postal</Label>
+                <Label htmlFor="postalCode">Code postal *</Label>
                 <Input
                   id="postalCode"
                   value={formData.postalCode}
                   onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
                   placeholder="75001"
                   maxLength={10}
+                  required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="city">Ville</Label>
+                <Label htmlFor="city">Ville *</Label>
                 <Input
                   id="city"
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                   placeholder="Paris"
+                  required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="address">Adresse</Label>
+              <Label htmlFor="address">Adresse *</Label>
               <Input
                 id="address"
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                 placeholder="123 rue de la Paix"
+                required
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="sector">Secteur d&apos;activité</Label>
+                <Label htmlFor="sector">Secteur d&apos;activité *</Label>
                 <Select
                   value={formData.sector}
                   onValueChange={(value) => setFormData({ ...formData, sector: value })}
+                  required
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Sélectionner" />
@@ -136,7 +141,7 @@ export function CompanyDetailsStep({ onSuccess }: CompanyDetailsStepProps) {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="employeeCount">Nombre d&apos;employés</Label>
+                <Label htmlFor="employeeCount">Nombre d&apos;employés *</Label>
                 <Input
                   id="employeeCount"
                   type="number"
@@ -144,6 +149,7 @@ export function CompanyDetailsStep({ onSuccess }: CompanyDetailsStepProps) {
                   onChange={(e) => setFormData({ ...formData, employeeCount: e.target.value })}
                   placeholder="10"
                   min={1}
+                  required
                 />
               </div>
             </div>

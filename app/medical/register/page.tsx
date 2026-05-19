@@ -171,7 +171,7 @@ export default function MedicalRegisterPage() {
                     <div className="space-y-2">
                       <Label htmlFor="postalCode">
                         <MapPin className="w-4 h-4 inline mr-1" />
-                        Code postal
+                        Code postal *
                       </Label>
                       <Input
                         id="postalCode"
@@ -179,26 +179,29 @@ export default function MedicalRegisterPage() {
                         onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
                         placeholder="75001"
                         maxLength={10}
+                        required
                       />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="city">Ville</Label>
                       <Input
-                        id="city"
+                        id="city *"
                         value={formData.city}
                         onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                         placeholder="Paris"
+                        required
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="address">Adresse complète</Label>
+                    <Label htmlFor="address">Adresse complète *</Label>
                     <Input
-                      id="address"
+                      id="address *"
                       value={formData.address}
                       onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                       placeholder="15 rue de la Santé"
+                      required
                     />
                   </div>
 
@@ -206,19 +209,20 @@ export default function MedicalRegisterPage() {
                     <div className="space-y-2">
                       <Label htmlFor="phone">
                         <Phone className="w-4 h-4 inline mr-1" />
-                        Téléphone
+                        Téléphone *
                       </Label>
                       <Input
                         id="phone"
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         placeholder="01 23 45 67 89"
+                        required
                       />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email">
                         <Mail className="w-4 h-4 inline mr-1" />
-                        Email de contact
+                        Email de contact *
                       </Label>
                       <Input
                         id="email"
@@ -226,6 +230,7 @@ export default function MedicalRegisterPage() {
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         placeholder="contact@example.fr"
+                        required
                       />
                     </div>
                   </div>
@@ -244,23 +249,25 @@ export default function MedicalRegisterPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="sectors">Secteurs couverts</Label>
+                    <Label htmlFor="sectors">Secteurs couverts *</Label>
                     <Input
                       id="sectors"
                       value={formData.sectors}
                       onChange={(e) => setFormData({ ...formData, sectors: e.target.value })}
                       placeholder="BTP, Industrie, Commerce, Services..."
+                      required
                     />
                     <p className="text-xs text-slate-500">Séparez les secteurs par des virgules</p>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="coveragePostalCodes">Codes postaux couverts</Label>
+                    <Label htmlFor="coveragePostalCodes">Codes postaux couverts *</Label>
                     <Input
                       id="coveragePostalCodes"
                       value={formData.coveragePostalCodes}
                       onChange={(e) => setFormData({ ...formData, coveragePostalCodes: e.target.value })}
                       placeholder="75, 77, 78, 91, 92, 93, 94, 95..."
+                      required
                     />
                     <p className="text-xs text-slate-500">Indiquez les départements ou codes postaux couverts</p>
                   </div>
