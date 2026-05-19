@@ -42,8 +42,6 @@ async function run() {
       ),
     );
 
-  console.log(`Found ${companies.length} companies without coordinates\n`);
-
   for (const company of companies) {
     const coords = await geocodeAddress(
       company.address,
@@ -56,20 +54,12 @@ async function run() {
         .update(schema.medicalCompaniesTable)
         .set({ latitude: coords.latitude, longitude: coords.longitude })
         .where(eq(schema.medicalCompaniesTable.id, company.id));
-
-      console.log(`✓ ${company.name} → ${coords.latitude}, ${coords.longitude}`);
-    } else {
-      console.log(`✗ ${company.name} → geocoding failed (no address?)`);
     }
 
     await new Promise((r) => setTimeout(r, 200));
   }
 
-  console.log('\nDone.');
   process.exit(0);
 }
 
-run().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+run().catch(() => process.exit(1));
