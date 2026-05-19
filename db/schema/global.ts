@@ -5,6 +5,7 @@ import {
   text,
   timestamp,
   pgEnum,
+  real,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 export * from './auth';
@@ -54,6 +55,8 @@ export const medicalCompaniesTable = pgTable('medical_companies', {
   website: varchar({ length: 255 }),
   sectors: text(),
   coveragePostalCodes: text(),
+  latitude: real(),
+  longitude: real(),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });

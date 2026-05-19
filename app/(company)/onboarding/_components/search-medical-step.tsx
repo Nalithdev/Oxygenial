@@ -1,16 +1,24 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { motion } from "motion/react";
-import { Search, MapPin, Phone, Mail, Building2, ChevronRight } from "lucide-react";
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Building2,
+  X,
+  ChevronRight,
+  Search,
+} from "lucide-react";
 import { orpc, orpcClient } from "@/lib/orpc-client";
 import { verticalFadeIn } from "@/lib/animations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +27,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import type { MedicalCompanyMarker } from "./medical-map";
+
+const MedicalMap = dynamic(
+  () => import("./medical-map").then((m) => m.MedicalMap),
+  { ssr: false, loading: () => <div className="w-full h-full bg-slate-100 rounded-xl animate-pulse" /> },
+);
 
 interface SearchMedicalStepProps {
   onSuccess: () => void;
@@ -27,10 +41,8 @@ interface SearchMedicalStepProps {
 export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
   const [search, setSearch] = useState("");
   const [postalCode, setPostalCode] = useState("");
-  const [selectedCompany, setSelectedCompany] = useState<{
-    id: number;
-    name: string;
-  } | null>(null);
+  const [selectedCompany, setSelectedCompany] = useState<MedicalCompanyMarker | null>(null);
+  const [requestTarget, setRequestTarget] = useState<MedicalCompanyMarker | null>(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -39,27 +51,31 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
       input: {
         search: search || undefined,
         postalCode: postalCode || undefined,
-        limit: 20,
+        limit: 100,
       },
     })
   );
 
   const createRequestMutation = useMutation({
     mutationFn: async () => {
-      if (!selectedCompany) throw new Error("Aucune entreprise sélectionnée");
+      if (!requestTarget) throw new Error("Aucune entreprise sélectionnée");
       return orpcClient.membershipRequest.create({
-        medicalCompanyId: selectedCompany.id,
+        medicalCompanyId: requestTarget.id,
         message: message || undefined,
       });
     },
     onSuccess: () => {
-      setSelectedCompany(null);
+      setRequestTarget(null);
       onSuccess();
     },
-    onError: (error: Error) => {
-      setError(error.message);
+    onError: (err: Error) => {
+      setError(err.message);
     },
   });
+
+  const companies = (searchQuery.data ?? []) as MedicalCompanyMarker[];
+  const withCoords = companies.filter((c) => c.latitude != null && c.longitude != null);
+  const withoutCoords = companies.filter((c) => c.latitude == null || c.longitude == null);
 
   return (
     <motion.div
@@ -67,103 +83,182 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
       animate="animate"
       exit="exit"
       variants={verticalFadeIn}
-      className="space-y-6"
+      className="space-y-4"
     >
-      <Card className="border-slate-200 shadow-lg">
-        <CardHeader className="text-center pb-2">
-          <div className="w-14 h-14 mx-auto mb-4 bg-emerald-100 rounded-2xl flex items-center justify-center">
-            <Search className="w-7 h-7 text-emerald-600" />
-          </div>
-          <CardTitle className="text-xl">Trouvez votre service de santé</CardTitle>
-          <CardDescription>
-            Recherchez un service de santé au travail adapté à votre entreprise
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-3 mb-6">
-            <div className="flex-1">
-              <Input
-                placeholder="Rechercher par nom..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="h-11"
-              />
-            </div>
-            <div className="w-40">
-              <Input
-                placeholder="Code postal"
-                value={postalCode}
-                onChange={(e) => setPostalCode(e.target.value)}
-                maxLength={5}
-                className="h-11"
-              />
-            </div>
-          </div>
+      {/* Search bar */}
+      <div className="flex gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Input
+            placeholder="Rechercher par nom..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="h-11 pl-9"
+          />
+        </div>
+        <div className="w-40">
+          <Input
+            placeholder="Code postal"
+            value={postalCode}
+            onChange={(e) => setPostalCode(e.target.value)}
+            maxLength={5}
+            className="h-11"
+          />
+        </div>
+      </div>
 
+      {/* Map + Sidebar layout */}
+      <div className="relative flex gap-4 h-[500px]">
+        {/* Map */}
+        <div className={`relative transition-all duration-300 ${selectedCompany ? "flex-1" : "w-full"}`}>
           {searchQuery.isPending ? (
-            <div className="flex justify-center py-12">
+            <div className="w-full h-full bg-slate-100 rounded-xl animate-pulse flex items-center justify-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
             </div>
-          ) : searchQuery.data?.length === 0 ? (
-            <div className="text-center py-12 text-slate-500">
-              <Building2 className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-              <p>Aucun service de santé trouvé</p>
-              <p className="text-sm mt-1">Essayez d&apos;élargir votre recherche</p>
+          ) : withCoords.length === 0 ? (
+            <div className="w-full h-full bg-slate-100 rounded-xl flex flex-col items-center justify-center text-slate-500 gap-3">
+              <Building2 className="w-12 h-12 text-slate-300" />
+              <p className="text-sm">
+                {companies.length === 0
+                  ? "Aucun service de santé trouvé"
+                  : `${withoutCoords.length} service(s) sans localisation`}
+              </p>
             </div>
           ) : (
-            <div className="space-y-3">
-              {searchQuery.data?.map((company) => (
-                <div
-                  key={company.id}
-                  className="p-4 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all cursor-pointer group"
-                  onClick={() => setSelectedCompany({ id: company.id, name: company.name })}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-slate-900 group-hover:text-blue-700 transition-colors">
-                        {company.name}
-                      </h3>
-                      {company.description && (
-                        <p className="text-sm text-slate-600 mt-1 line-clamp-2">
-                          {company.description}
-                        </p>
-                      )}
-                      <div className="flex flex-wrap gap-3 mt-3 text-sm text-slate-500">
-                        {company.city && (
-                          <span className="flex items-center gap-1">
-                            <MapPin className="w-3.5 h-3.5" />
-                            {company.postalCode} {company.city}
-                          </span>
-                        )}
-                        {company.phone && (
-                          <span className="flex items-center gap-1">
-                            <Phone className="w-3.5 h-3.5" />
-                            {company.phone}
-                          </span>
-                        )}
-                        {company.email && (
-                          <span className="flex items-center gap-1">
-                            <Mail className="w-3.5 h-3.5" />
-                            {company.email}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-blue-600 transition-colors mt-1" />
+            <MedicalMap
+              companies={withCoords}
+              selectedId={selectedCompany?.id ?? null}
+              onSelect={setSelectedCompany}
+            />
+          )}
+
+        </div>
+
+        {/* Sidebar */}
+        {selectedCompany && (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.2 }}
+            className="w-80 bg-white border border-slate-200 rounded-xl shadow-lg flex flex-col overflow-hidden"
+          >
+            {/* Header */}
+            <div className="flex items-start justify-between p-4 border-b border-slate-100">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-slate-900 text-sm leading-tight truncate">
+                  {selectedCompany.name}
+                </h3>
+                {selectedCompany.city && (
+                  <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
+                    <MapPin className="w-3 h-3 shrink-0" />
+                    {selectedCompany.postalCode} {selectedCompany.city}
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={() => setSelectedCompany(null)}
+                className="ml-2 p-1 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {selectedCompany.description && (
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  {selectedCompany.description}
+                </p>
+              )}
+
+              {selectedCompany.address && (
+                <div className="flex items-start gap-2 text-xs text-slate-600">
+                  <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0 text-slate-400" />
+                  <span>{selectedCompany.address}</span>
+                </div>
+              )}
+
+              {selectedCompany.phone && (
+                <div className="flex items-center gap-2 text-xs text-slate-600">
+                  <Phone className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+                  <a href={`tel:${selectedCompany.phone}`} className="hover:text-blue-600 transition-colors">
+                    {selectedCompany.phone}
+                  </a>
+                </div>
+              )}
+
+              {selectedCompany.email && (
+                <div className="flex items-center gap-2 text-xs text-slate-600">
+                  <Mail className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+                  <a href={`mailto:${selectedCompany.email}`} className="hover:text-blue-600 transition-colors truncate">
+                    {selectedCompany.email}
+                  </a>
+                </div>
+              )}
+
+              {selectedCompany.sectors && (
+                <div className="pt-1">
+                  <p className="text-xs font-medium text-slate-700 mb-1.5">Secteurs couverts</p>
+                  <div className="flex flex-wrap gap-1">
+                    {selectedCompany.sectors.split(",").map((s) => (
+                      <span
+                        key={s}
+                        className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-blue-50 text-blue-700 border border-blue-100"
+                      >
+                        {s.trim()}
+                      </span>
+                    ))}
                   </div>
                 </div>
-              ))}
+              )}
             </div>
-          )}
-        </CardContent>
-      </Card>
 
-      <Dialog open={!!selectedCompany} onOpenChange={() => setSelectedCompany(null)}>
+            {/* CTA */}
+            <div className="p-4 border-t border-slate-100">
+              <Button
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-sm h-9"
+                onClick={() => setRequestTarget(selectedCompany)}
+              >
+                Envoyer une demande
+                <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </div>
+
+      {/* List of SPSTIs without coordinates */}
+      {withoutCoords.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-xs text-slate-500 font-medium">
+            {withoutCoords.length} service(s) sans localisation géographique
+          </p>
+          {withoutCoords.map((company) => (
+            <div
+              key={company.id}
+              className="p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all cursor-pointer flex items-center justify-between"
+              onClick={() => setRequestTarget(company)}
+            >
+              <div>
+                <p className="text-sm font-medium text-slate-900">{company.name}</p>
+                {company.city && (
+                  <p className="text-xs text-slate-500">{company.postalCode} {company.city}</p>
+                )}
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-400" />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Dialog demande */}
+      <Dialog open={!!requestTarget} onOpenChange={() => setRequestTarget(null)}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Demander à rejoindre</DialogTitle>
             <DialogDescription>
-              Envoyez une demande d&apos;adhésion à {selectedCompany?.name}
+              Envoyez une demande d&apos;adhésion à {requestTarget?.name}
             </DialogDescription>
           </DialogHeader>
 
@@ -187,7 +282,7 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setSelectedCompany(null)}>
+            <Button variant="outline" onClick={() => setRequestTarget(null)}>
               Annuler
             </Button>
             <Button
@@ -203,4 +298,3 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
     </motion.div>
   );
 }
-
