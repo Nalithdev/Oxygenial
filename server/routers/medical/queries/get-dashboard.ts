@@ -25,10 +25,22 @@ export const getMedicalDashboard = medicalStaffProcedure.handler(
           ),
           eq(membershipRequestsTable.status, 'pending'),
         ),
-        with: {
-          clientCompany: true,
-        },
+        with: { clientCompany: true },
         orderBy: [desc(membershipRequestsTable.createdAt)],
+        limit: 5,
+      });
+
+    const acceptedRequests =
+      await database.query.membershipRequestsTable.findMany({
+        where: and(
+          eq(
+            membershipRequestsTable.medicalCompanyId,
+            context.medicalCompany.id,
+          ),
+          eq(membershipRequestsTable.status, 'accepted'),
+        ),
+        with: { clientCompany: true },
+        orderBy: [desc(membershipRequestsTable.updatedAt)],
         limit: 5,
       });
 
@@ -37,9 +49,7 @@ export const getMedicalDashboard = medicalStaffProcedure.handler(
         clientCompaniesTable.medicalCompanyId,
         context.medicalCompany.id,
       ),
-      with: {
-        employees: true,
-      },
+      with: { employees: true },
     });
 
     const upcomingBookings = await database.query.bookingsTable.findMany({
@@ -60,19 +70,23 @@ export const getMedicalDashboard = medicalStaffProcedure.handler(
       limit: 10,
     });
 
+    const totalEmployees = clientCompanies.reduce(
+      (sum, c) => sum + c.employees.length,
+      0,
+    );
+
     return {
       medicalCompany: context.medicalCompany,
       pendingRequests,
+      acceptedRequests,
       clientCompanies,
       upcomingBookings,
       stats: {
         totalClients: clientCompanies.length,
-        totalEmployees: clientCompanies.reduce(
-          (sum, c) => sum + c.employees.length,
-          0,
-        ),
+        totalEmployees,
         pendingRequestsCount: pendingRequests.length,
         upcomingBookingsCount: upcomingBookings.length,
+        acceptedRequestsCount: acceptedRequests.length,
       },
     };
   },
