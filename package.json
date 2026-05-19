@@ -2,6 +2,9 @@
   "name": "oxygenial",
   "version": "0.1.0",
   "private": true,
+  "pnpm": {
+    "onlyBuiltDependencies": ["@prisma/client", "better-sqlite3", "esbuild", "msw", "sharp", "unrs-resolver"]
+  },
   "scripts": {
     "dev": "concurrently \"next dev\" \"drizzle-kit studio\"",
     "build": "next build",

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { motion } from "motion/react";
 import { Search, MapPin, Phone, Mail, Building2, ChevronRight } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { orpc, orpcClient } from "@/lib/orpc-client";
 import { verticalFadeIn } from "@/lib/animations";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ interface SearchMedicalStepProps {
 export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
   const [search, setSearch] = useState("");
   const [postalCode, setPostalCode] = useState("");
+  const [radiusKm, setRadiusKm] = useState(30);
   const [selectedCompany, setSelectedCompany] = useState<{
     id: number;
     name: string;
@@ -39,6 +41,7 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
       input: {
         search: search || undefined,
         postalCode: postalCode || undefined,
+        radiusKm,
         limit: 20,
       },
     })
@@ -89,7 +92,7 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
                 className="h-11"
               />
             </div>
-            <div className="w-40">
+            <div className="w-36">
               <Input
                 placeholder="Code postal"
                 value={postalCode}
@@ -98,6 +101,24 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
                 className="h-11"
               />
             </div>
+            {postalCode.length === 5 && (
+              <div className="w-32">
+                <Select
+                  value={String(radiusKm)}
+                  onValueChange={(v) => setRadiusKm(Number(v))}
+                >
+                  <SelectTrigger className="h-11">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10 km</SelectItem>
+                    <SelectItem value="30">30 km</SelectItem>
+                    <SelectItem value="50">50 km</SelectItem>
+                    <SelectItem value="100">100 km</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
 
           {searchQuery.isPending ? (
