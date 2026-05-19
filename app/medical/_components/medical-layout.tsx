@@ -90,6 +90,15 @@ export function MedicalDashboardLayout({ children }: MedicalLayoutProps) {
                     <p className="text-slate-500 truncate">{session?.user?.email}</p>
                   </div>
                   <DropdownMenuSeparator />
+                  <Link href={'/profil'}>
+                    <DropdownMenuItem
+                      className="cursor-pointer"
+                    >
+                      Profil
+                    </DropdownMenuItem>
+                  </Link>
+
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={() => signOut({ fetchOptions: { onSuccess: () => { window.location.href = "/"; } } })}
                     className="text-red-600 cursor-pointer"
