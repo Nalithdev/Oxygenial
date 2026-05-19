@@ -1,10 +1,18 @@
+import { getSession } from "@/lib/auth-server-client";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export default function AuthLayout({
+export default async function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { error, data } = await getSession();
+
+  if(!error && data) {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="min-h-screen flex">
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
