@@ -43,7 +43,7 @@ export function Navbar() {
       {session?.user?.name ?
         <div className="flex items-center gap-4">
           <Button asChild variant="ghost" size="sm">
-            <Link href="/medical/requests">Dashboard</Link>
+            <Link href="/dashboard">Dashboard</Link>
           </Button>
           <Button onClick={() => signOut()} asChild variant="ghost" size="sm">
             <p className="cursor-pointer">Se déconnecter</p>
