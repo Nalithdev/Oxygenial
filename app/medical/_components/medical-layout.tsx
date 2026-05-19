@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   Stethoscope,
+  UserCog,
 } from "lucide-react";
 import { signOut, useSession } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ const navigation = [
   { name: "Tableau de bord", href: "/medical", icon: LayoutDashboard },
   { name: "Demandes", href: "/medical/requests", icon: Inbox },
   { name: "Entreprises", href: "/medical/company", icon: Building2 },
+  { name: "Mon SPSTI", href: "/medical/profil", icon: UserCog },
 ];
 
 interface MedicalLayoutProps {

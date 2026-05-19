@@ -25,13 +25,10 @@ export default function MedicalDashboardPage() {
   );
 
   useEffect(() => {
-    if (statusQuery.data) {
-      if (statusQuery.data.type !== "medical_staff") {
-        router.push("/onboarding");
-        return;
-      }
+    if (!statusQuery.isPending && statusQuery.data?.type !== "medical_staff") {
+      router.push("/onboarding");
     }
-  }, [statusQuery.data, router]);
+  }, [statusQuery.data, statusQuery.isPending, router]);
 
   if (statusQuery.isPending || dashboardQuery.isPending) {
     return (
