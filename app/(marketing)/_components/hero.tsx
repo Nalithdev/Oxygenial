@@ -21,7 +21,7 @@ export function Hero() {
         >
           <motion.div variants={verticalFadeIn} className="mb-6 flex justify-center">
             <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-medium tracking-wide border border-blue-100">
-              L&apos;annuaire de référence pour les PME &amp; TPE
+              La mise en relation intelligente entre entreprises et SPSTI
             </span>
           </motion.div>
 
@@ -29,9 +29,9 @@ export function Hero() {
             variants={verticalFadeIn}
             className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 mb-8 text-balance"
           >
-            La médecine du travail,{" "}
+            Trouvez le bon service de santé au travail.{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-              simplifiée.
+              En quelques minutes.
             </span>
           </motion.h1>
 
@@ -39,8 +39,7 @@ export function Hero() {
             variants={verticalFadeIn}
             className="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto text-balance leading-relaxed"
           >
-            Trouvez le service de santé au travail adapté à votre entreprise en quelques clics.
-            Comparez les offres et gérez vos obligations légales sans stress.
+            Oxygenial qualifie votre besoin, identifie les SPSTI compatibles avec votre situation et vous met en relation avec les bons interlocuteurs sans formulaires longs, sans recherches dispersées, sans stress administratif.
           </motion.p>
 
           <motion.div
@@ -50,7 +49,7 @@ export function Hero() {
             <Button asChild size="lg" className="h-12 px-8 text-base rounded-full shadow-lg shadow-blue-500/20">
               <Link href="/sign-up">
                 <Building2 className="mr-2 h-4 w-4" />
-                Inscrire mon entreprise
+                Trouver mon SPSTI
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="h-12 px-8 text-base rounded-full bg-white/50 backdrop-blur-sm hover:bg-white/80 border-slate-200">
@@ -69,19 +68,19 @@ export function Hero() {
               <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
                 <Stethoscope className="w-4 h-4 text-emerald-600" />
               </div>
-              <span>Services vérifiés</span>
+              <span>SPSTI qualifiés</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
                 <Building2 className="w-4 h-4 text-blue-600" />
               </div>
-              <span>Gestion simplifiée</span>
+              <span>Matching intelligent</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center">
                 <Users className="w-4 h-4 text-violet-600" />
               </div>
-              <span>Suivi des employés</span>
+              <span>Demandes structurées</span>
             </div>
           </motion.div>
         </motion.div>

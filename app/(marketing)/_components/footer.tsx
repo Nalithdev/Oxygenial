@@ -14,7 +14,7 @@ export function Footer() {
               <span className="text-xl font-bold">Oxygenial</span>
             </Link>
             <p className="text-slate-400 leading-relaxed max-w-sm">
-              L&apos;annuaire de référence pour les TPE et PME françaises à la recherche d&apos;un service de santé au travail.
+              Comprenez vos obligations, identifiez les SPSTI compatibles avec votre secteur et votre localisation, et initiez votre démarche d'adhésion en quelques minutes sans expertise RH requise.
             </p>
           </div>
 
@@ -44,7 +44,7 @@ export function Footer() {
             <ul className="space-y-2 text-slate-400">
               <li>
                 <Link href="/medical/register" className="hover:text-white transition-colors">
-                  Référencer mon service
+                  Rejoindre Oxygenial
                 </Link>
               </li>
               <li>
@@ -60,9 +60,10 @@ export function Footer() {
           <div className="text-sm text-slate-500">
             © {new Date().getFullYear()} Oxygenial. Tous droits réservés.
           </div>
-          <div className="flex gap-6 text-sm text-slate-500">
-            <Link href="/privacy" className="hover:text-white transition-colors">Confidentialité</Link>
-            <Link href="/terms" className="hover:text-white transition-colors">Conditions</Link>
+          <div className="flex flex-col md:flex-row gap-4 text-sm text-slate-500">
+            <Link href="/legal/mentions-legales" className="hover:text-white transition-colors">Mentions légales</Link>
+            <Link href="/legal/conditions-utilisation" className="hover:text-white transition-colors">Conditions d’utilisation</Link>
+            <Link href="/legal/politique-confidentialite" className="hover:text-white transition-colors">Politique de confidentialité</Link>
           </div>
         </div>
       </div>
