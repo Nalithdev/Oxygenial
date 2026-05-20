@@ -15,6 +15,13 @@
       "when": 1779195078790,
       "tag": "0001_lovely_angel",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1779182178904,
+      "tag": "0001_regular_talos",
+      "breakpoints": true
     }
   ]
 }
