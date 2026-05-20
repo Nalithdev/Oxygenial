@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(brew --prefix pnpm)",
+      "Read(//usr/local/Cellar/pnpm/**)",
+      "Read(//opt/homebrew/bin/**)",
+      "Bash(/usr/local/Cellar/pnpm/11.1.2/bin/pnpm --version)",
+      "Bash(cat -n ~/.zshrc)",
+      "Read(//Users/mikaramanantsoa/**)",
+      "Bash(pnpm dev *)",
+      "Bash(/usr/local/Cellar/pnpm/11.1.2/bin/pnpm config *)",
+      "Bash(grep -v \"^--$\")",
+      "Bash(find ~/.config /usr/local/etc -name \"rc\" -path \"*/pnpm/*\" 2>/dev/null; find ~ -maxdepth 3 -name \".pnpmrc\" 2>/dev/null)",
+      "Read(//usr/local/etc/**)",
+      "Bash(kill 32233)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(git checkout *)",
+      "Bash(git pull *)",
+      "Bash(git add *)",
+      "Bash(gh pr *)",
+      "Bash(git fetch *)",
+      "Bash(git merge *)",
+      "Bash(pnpm db:push)"
+    ],
+    "additionalDirectories": [
+      "/Users/mikaramanantsoa"
+    ]
+  }
+}
