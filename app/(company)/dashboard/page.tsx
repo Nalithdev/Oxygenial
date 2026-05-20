@@ -191,117 +191,107 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
           {/* À confirmer */}
           <motion.div variants={verticalFadeIn} className="flex flex-col">
-            <Card className="border-slate-200 flex flex-col flex-1">
-              <CardHeader className="flex flex-row items-center justify-between shrink-0">
-                <div className="flex items-center gap-2">
-                  <CardTitle className="text-lg">À confirmer</CardTitle>
-                  {pendingBookings.length > 0 && (
-                    <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold">
-                      {pendingBookings.length}
-                    </span>
-                  )}
-                </div>
-                <Link href="/appointments">
-                  <Button variant="ghost" size="sm">
-                    Voir tout <ChevronRight className="w-4 h-4 ml-1" />
-                  </Button>
-                </Link>
-              </CardHeader>
-              <CardContent className="flex-1">
-                {bookingsQuery.isPending ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600" />
-                  </div>
-                ) : !pendingBookings.length ? (
-                  <div className="flex flex-col items-center justify-center h-full py-8 text-slate-500">
-                    <Calendar className="w-10 h-10 mb-2 text-slate-300" />
-                    <p className="text-sm">Aucun rendez-vous en attente</p>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {pendingBookings.slice(0, 5).map((booking) => (
-                      <button
-                        key={booking.id}
-                        onClick={() => openBooking(booking)}
-                        className="w-full flex items-center gap-3 p-3 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-100 transition-colors text-left"
-                      >
-                        <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center border border-amber-200 shrink-0">
-                          <Clock className="w-4 h-4 text-amber-500" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-slate-900 truncate">
-                            {booking.employee?.user?.name}
-                          </p>
-                          <p className="text-xs text-slate-500 capitalize">
-                            {new Date(booking.scheduledAt).toLocaleDateString("fr-FR", {
-                              weekday: "short", day: "numeric", month: "short",
-                              hour: "2-digit", minute: "2-digit",
-                            })}
-                          </p>
-                        </div>
-                        <Badge variant="outline" className="shrink-0 border-amber-300 text-amber-700 bg-white text-xs">
-                          En attente
-                        </Badge>
-                      </button>
-                    ))}
-                  </div>
+           <Card className="border-slate-200 flex flex-col">
+            <CardHeader className="flex flex-row items-center justify-between pb-3 shrink-0">
+              <div className="flex items-center gap-2">
+                <CardTitle className="text-base font-semibold">Rendez-vous à confirmer</CardTitle>
+                {pendingBookings.length > 0 && (
+                  <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold">
+                    {pendingBookings.length}
+                  </span>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+              <Link href="/medical/appointments">
+                <Button variant="ghost" size="sm">
+                  Voir tout <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </Link>
+            </CardHeader>
+            <CardContent className="flex-1">
+              {!pendingBookings.length ? (
+                <div className="flex flex-col items-center justify-center h-full py-8 text-slate-400">
+                  <Calendar className="w-10 h-10 mx-auto mb-2 text-slate-300" />
+                  <p className="text-sm">Aucun rendez-vous à confirmer</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {pendingBookings.slice(0, 5).map((booking) => (
+                    <button
+                      key={booking.id}
+                      onClick={() => openBooking(booking)}
+                      className="w-full flex items-center gap-3 p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors text-left"
+                    >
+                      <div className="w-9 h-9 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
+                        <Clock className="w-4 h-4 text-amber-500" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-slate-900 truncate text-sm">{booking.employee?.user?.name}</p>
+                        <p className="text-xs text-slate-500 truncate">
+                          {booking.employee?.clientCompany?.name} ·{" "}
+                          {new Date(booking.scheduledAt).toLocaleDateString("fr-FR", {
+                            weekday: "short", day: "numeric", month: "short",
+                            hour: "2-digit", minute: "2-digit",
+                          })}
+                        </p>
+                      </div>
+                      <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 text-xs shrink-0 border-0">
+                        En attente
+                      </Badge>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
           </motion.div>
 
           {/* Confirmés */}
           <motion.div variants={verticalFadeIn} className="flex flex-col">
-            <Card className="border-slate-200 flex flex-col flex-1">
-              <CardHeader className="flex flex-row items-center justify-between shrink-0">
-                <CardTitle className="text-lg">Prochains rendez-vous</CardTitle>
-                <Link href="/appointments">
-                  <Button variant="ghost" size="sm">
-                    Voir tout <ChevronRight className="w-4 h-4 ml-1" />
-                  </Button>
-                </Link>
-              </CardHeader>
-              <CardContent className="flex-1">
-                {bookingsQuery.isPending ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600" />
-                  </div>
-                ) : !confirmedBookings.length ? (
-                  <div className="flex flex-col items-center justify-center h-full py-8 text-slate-500">
-                    <Calendar className="w-10 h-10 mb-2 text-slate-300" />
-                    <p className="text-sm">Aucun rendez-vous confirmé</p>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {confirmedBookings.slice(0, 5).map((booking) => (
-                      <button
-                        key={booking.id}
-                        onClick={() => openBooking(booking)}
-                        className="w-full flex items-center gap-3 p-3 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-100 transition-colors text-left"
-                      >
-                        <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center border border-slate-200 shrink-0">
-                          <Clock className="w-4 h-4 text-slate-400" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-slate-900 truncate">
-                            {booking.employee?.user?.name}
-                          </p>
-                          <p className="text-xs text-slate-500 capitalize">
-                            {new Date(booking.scheduledAt).toLocaleDateString("fr-FR", {
-                              weekday: "short", day: "numeric", month: "short",
-                              hour: "2-digit", minute: "2-digit",
-                            })}
-                          </p>
-                        </div>
-                        <Badge variant="default" className="shrink-0 text-xs">
-                          Confirmé
-                        </Badge>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+              <Card className="border-slate-200 flex flex-col">
+            <CardHeader className="flex flex-row items-center justify-between pb-3 shrink-0">
+              <CardTitle className="text-base font-semibold">Prochains rendez-vous</CardTitle>
+              <Link href="/medical/appointments">
+                <Button variant="ghost" size="sm">
+                  Voir tout <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </Link>
+            </CardHeader>
+            <CardContent className="flex-1">
+              {!confirmedBookings.length ? (
+                <div className="flex flex-col items-center justify-center h-full py-8 text-slate-400">
+                  <Calendar className="w-10 h-10 mx-auto mb-2 text-slate-300" />
+                  <p className="text-sm">Aucun rendez-vous planifié</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {confirmedBookings.slice(0, 5).map((booking) => (
+                    <button
+                      key={booking.id}
+                      onClick={() => openBooking(booking)}
+                      className="w-full flex items-center gap-3 p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors text-left"
+                    >
+                      <div className="w-9 h-9 bg-violet-100 rounded-lg flex items-center justify-center shrink-0">
+                        <Clock className="w-4 h-4 text-violet-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-slate-900 truncate text-sm">{booking.employee?.user?.name}</p>
+                        <p className="text-xs text-slate-400 truncate">
+                          {booking.employee?.clientCompany?.name} ·{" "}
+                          {new Date(booking.scheduledAt).toLocaleDateString("fr-FR", {
+                            weekday: "short", day: "numeric", month: "short",
+                            hour: "2-digit", minute: "2-digit",
+                          })}
+                        </p>
+                      </div>
+                      <Badge className="bg-violet-100 text-violet-700 hover:bg-violet-100 text-xs shrink-0 border-0">
+                        Confirmé
+                      </Badge>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
           </motion.div>
         </div>
 
