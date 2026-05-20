@@ -55,7 +55,7 @@ export function CompanyDetailsStep({ onSuccess }: CompanyDetailsStepProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form className="space-y-4">
             {error && (
               <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
                 {error}
@@ -67,7 +67,7 @@ export function CompanyDetailsStep({ onSuccess }: CompanyDetailsStepProps) {
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 placeholder="Ma Société SAS"
                 required
               />
@@ -155,7 +155,7 @@ export function CompanyDetailsStep({ onSuccess }: CompanyDetailsStepProps) {
             </div>
 
             <Button
-              type="submit"
+              onClick={() => handleSubmit()}
               className="w-full h-12 text-base font-semibold rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
               disabled={createCompanyMutation.isPending}
             >
