@@ -64,7 +64,7 @@ export default function WelcomePage() {
       >
         <motion.div variants={verticalFadeIn} className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 tracking-tight">
-            Bienvenue sur Oxygenial
+            Bienvenue sur Medli'
           </h1>
           <p className="text-slate-600 text-lg">
             Que souhaitez-vous faire aujourd&apos;hui ?

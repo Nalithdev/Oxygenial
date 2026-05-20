@@ -21,7 +21,7 @@ export function Hero() {
         >
           <motion.div variants={verticalFadeIn} className="mb-6 flex justify-center">
             <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-medium tracking-wide border border-blue-100">
-              L&apos;annuaire de référence pour les PME &amp; TPE
+               La mise en relation intelligente entre entreprises et SPSTI
             </span>
           </motion.div>
 

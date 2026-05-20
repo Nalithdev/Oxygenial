@@ -24,7 +24,7 @@ export function About() {
             </motion.h2>
             <motion.p variants={verticalFadeIn} className="text-slate-600 text-lg mb-8 leading-relaxed">
               Face à la complexité du marché et à la pénurie de médecins du travail (-21% depuis 2010),
-              les dirigeants se sentent souvent démunis. Oxygenial a été créé pour répondre à ce besoin urgent.
+              les dirigeants se sentent souvent démunis. Medli' a été créé pour répondre à ce besoin urgent.
             </motion.p>
 
             <motion.ul variants={verticalFadeIn} className="space-y-4">
