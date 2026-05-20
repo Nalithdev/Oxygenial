@@ -100,11 +100,7 @@ export function useCompanyDetails(onSuccess: () => void) {
   });
 
   function handleSubmit() {
-    event.preventDefault();
-    console.log(formData);
-
     setError(null);
-
     if (!formData.name) {
       setError("Le nom de l'entreprise est requis");
       return;
