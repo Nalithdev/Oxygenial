@@ -1,4 +1,5 @@
-ALTER TYPE "public"."booking_status" ADD VALUE 'pending' BEFORE 'scheduled';--> statement-breakpoint
+ALTER TYPE "public"."booking_status" ADD VALUE IF NOT EXISTS 'pending' BEFORE 'scheduled';
+--> statement-breakpoint
 CREATE TABLE "conversations" (
 	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "conversations_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
 	"clientCompanyId" integer NOT NULL,
