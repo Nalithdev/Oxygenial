@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Users,
   Building2,
+  MessageSquare,
   LogOut,
   Menu,
   X,
@@ -25,6 +26,7 @@ import {
 const navigation = [
   { name: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard },
   { name: "Employés", href: "/employee", icon: Users },
+  { name: "Messages", href: "/messages", icon: MessageSquare },
 ];
 
 interface DashboardLayoutProps {

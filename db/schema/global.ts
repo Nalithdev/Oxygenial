@@ -6,6 +6,7 @@ import {
   timestamp,
   pgEnum,
   real,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 export * from './auth';
@@ -224,5 +225,56 @@ export const documentsRelations = relations(documentsTable, ({ one }) => ({
   employee: one(employeesTable, {
     fields: [documentsTable.employeeId],
     references: [employeesTable.id],
+  }),
+}));
+
+export const conversationsTable = pgTable(
+  'conversations',
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    clientCompanyId: integer()
+      .references(() => clientCompaniesTable.id, { onDelete: 'cascade' })
+      .notNull(),
+    medicalCompanyId: integer()
+      .references(() => medicalCompaniesTable.id, { onDelete: 'cascade' })
+      .notNull(),
+    createdAt: timestamp().notNull().defaultNow(),
+    updatedAt: timestamp().notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('conversations_client_medical_idx').on(t.clientCompanyId, t.medicalCompanyId)],
+);
+
+export const messagesTable = pgTable('messages', {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  conversationId: integer()
+    .references(() => conversationsTable.id, { onDelete: 'cascade' })
+    .notNull(),
+  senderUserId: text('sender_user_id')
+    .references(() => user.id, { onDelete: 'cascade' })
+    .notNull(),
+  content: text().notNull(),
+  createdAt: timestamp().notNull().defaultNow(),
+});
+
+export const conversationsRelations = relations(conversationsTable, ({ one, many }) => ({
+  clientCompany: one(clientCompaniesTable, {
+    fields: [conversationsTable.clientCompanyId],
+    references: [clientCompaniesTable.id],
+  }),
+  medicalCompany: one(medicalCompaniesTable, {
+    fields: [conversationsTable.medicalCompanyId],
+    references: [medicalCompaniesTable.id],
+  }),
+  messages: many(messagesTable),
+}));
+
+export const messagesRelations = relations(messagesTable, ({ one }) => ({
+  conversation: one(conversationsTable, {
+    fields: [messagesTable.conversationId],
+    references: [conversationsTable.id],
+  }),
+  sender: one(user, {
+    fields: [messagesTable.senderUserId],
+    references: [user.id],
   }),
 }));

@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Building2,
   Inbox,
+  MessageSquare,
   LogOut,
   Menu,
   X,
@@ -29,6 +30,7 @@ const navigation = [
   { name: "Demandes", href: "/medical/requests", icon: Inbox },
   { name: "Entreprises", href: "/medical/company", icon: Building2 },
   { name: "Mon SPSTI", href: "/medical/profil", icon: UserCog },
+  { name: "Messages", href: "/medical/messages", icon: MessageSquare },
 ];
 
 interface MedicalLayoutProps {
