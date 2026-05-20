@@ -10,7 +10,7 @@ export const listBookings = companyAdminProcedure
     z.object({
       employeeId: z.number().optional(),
       upcoming: z.boolean().optional(),
-      limit: z.number().min(1).max(100).default(20),
+      limit: z.number().min(1).max(1000).default(20),
       offset: z.number().min(0).default(0),
     }),
   )
@@ -52,6 +52,7 @@ export const listBookings = companyAdminProcedure
         employee: {
           with: {
             user: true,
+            clientCompany: true,
           },
         },
         medicalCompany: true,

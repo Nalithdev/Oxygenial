@@ -4,17 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "motion/react";
-import {
-  Building2,
-  Users,
-  Inbox,
-  Calendar,
-  ChevronRight,
-  Clock,
-  CheckCircle2,
-  MapPin,
-  TrendingUp,
-} from "lucide-react";
+import { Building2, Users, Inbox, Calendar, ChevronRight, Clock, Plus, CheckCircle2, TrendingUp, MapPin } from "lucide-react";
 import Link from "next/link";
 import { orpc } from "@/lib/orpc-client";
 import { verticalFadeIn } from "@/lib/animations";
@@ -28,6 +18,9 @@ export default function MedicalDashboardPage() {
 
   const statusQuery = useQuery(orpc.onboarding.getStatus.queryOptions({}));
   const dashboardQuery = useQuery(orpc.medical.getDashboard.queryOptions({}));
+  const bookingsQuery = useQuery(
+    orpc.booking.listMedical.queryOptions({ input: { upcoming: true, limit: 100 } })
+  );
 
   useEffect(() => {
     if (statusQuery.isSuccess && statusQuery.data?.type !== "medical_staff") {
@@ -44,6 +37,7 @@ export default function MedicalDashboardPage() {
   }
 
   const dashboard = dashboardQuery.data;
+  const confirmedBookings = bookingsQuery.data?.filter((b) => b.status === "scheduled") ?? [];
 
   return (
     <MedicalDashboardLayout>
@@ -84,9 +78,7 @@ export default function MedicalDashboardPage() {
                   <Building2 className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-slate-900">
-                    {dashboard?.stats?.totalClients ?? 0}
-                  </p>
+                  <p className="text-2xl font-bold text-slate-900">{dashboard?.stats?.totalClients ?? 0}</p>
                   <p className="text-sm text-slate-500">Entreprises clientes</p>
                 </div>
               </div>
@@ -100,9 +92,7 @@ export default function MedicalDashboardPage() {
                   <Users className="w-6 h-6 text-emerald-600" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-slate-900">
-                    {dashboard?.stats?.totalEmployees ?? 0}
-                  </p>
+                  <p className="text-2xl font-bold text-slate-900">{dashboard?.stats?.totalEmployees ?? 0}</p>
                   <p className="text-sm text-slate-500">Employés suivis</p>
                 </div>
               </div>
@@ -116,9 +106,7 @@ export default function MedicalDashboardPage() {
                   <Calendar className="w-6 h-6 text-violet-600" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-slate-900">
-                    {dashboard?.stats?.upcomingBookingsCount ?? 0}
-                  </p>
+                  <p className="text-2xl font-bold text-slate-900">{confirmedBookings.length}</p>
                   <p className="text-sm text-slate-500">RDV à venir</p>
                 </div>
               </div>
@@ -331,6 +319,68 @@ export default function MedicalDashboardPage() {
             </CardContent>
           </Card>
         </motion.div>
+        <motion.div variants={verticalFadeIn}>
+            <Card className="border-slate-200">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="text-lg">Prochains rendez-vous</CardTitle>
+                <Link href="/medical/appointments">
+                  <Button variant="ghost" size="sm">
+                    Voir tout
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </Link>
+              </CardHeader>
+              <CardContent>
+                {bookingsQuery.isPending ? (
+                  <div className="flex justify-center py-8">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-600" />
+                  </div>
+                ) : !confirmedBookings.length ? (
+                  <div className="text-center py-8 text-slate-500">
+                    <Calendar className="w-10 h-10 mx-auto mb-2 text-slate-300" />
+                    <p>Aucun rendez-vous confirmé à venir</p>
+                    <Link href="/medical/appointments">
+                      <Button variant="link" className="mt-2">
+                        <Plus className="w-4 h-4 mr-1" />
+                        Créer un rendez-vous
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {confirmedBookings.slice(0, 5).map((booking) => (
+                      <div
+                        key={booking.id}
+                        className="flex items-center gap-3 p-3 rounded-lg bg-slate-50"
+                      >
+                        <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-slate-200">
+                          <Clock className="w-5 h-5 text-slate-400" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-slate-900 truncate">
+                            {booking.employee?.user?.name}
+                          </p>
+                          <p className="text-sm text-slate-500 truncate">
+                            {booking.employee?.clientCompany?.name} ·{" "}
+                            {new Date(booking.scheduledAt).toLocaleDateString("fr-FR", {
+                              weekday: "short",
+                              day: "numeric",
+                              month: "short",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </p>
+                        </div>
+                        <Badge variant="default" className="shrink-0">
+                          Confirmé
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
       </motion.div>
     </MedicalDashboardLayout>
   );
