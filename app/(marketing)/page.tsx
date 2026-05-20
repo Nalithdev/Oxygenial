@@ -7,7 +7,6 @@ import { Features } from "./_components/features";
 import { About } from "./_components/about";
 import { CTA } from "./_components/cta";
 import { Footer } from "./_components/footer";
-
 export default function LandingPage() {
   return (
     <PageTransition>
