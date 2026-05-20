@@ -43,11 +43,11 @@ export function CTA() {
               </div>
               <h3 className="text-2xl font-bold text-slate-900 mb-4">Une TPE / PME</h3>
               <p className="text-slate-600 mb-8 leading-relaxed">
-                Trouvez rapidement un médecin du travail, gérez vos adhésions et restez en conformité avec la loi. Simplifiez vos démarches administratives dès aujourd&apos;hui.
+                Comprenez vos obligations, identifiez les SPSTI compatibles avec votre secteur et votre localisation, et initiez votre démarche d'adhésion en quelques minutes sans expertise RH requise.
               </p>
               <Button asChild size="lg" className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 group-hover:scale-[1.02] transition-transform">
                 <Link href="/sign-up">
-                  Inscrire mon entreprise
+                  Trouver mon SPSTI
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
@@ -69,13 +69,13 @@ export function CTA() {
               <div className="w-12 h-12 rounded-xl bg-white/20 text-white flex items-center justify-center mb-6">
                 <Stethoscope className="w-6 h-6" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-4">Un Service de Santé</h3>
+              <h3 className="text-2xl font-bold text-white mb-4">Un SPSTI</h3>
               <p className="text-emerald-100 mb-8 leading-relaxed">
-                Augmentez votre visibilité, digitalisez la gestion de vos adhésions et facilitez la communication avec vos entreprises adhérentes.
+                Recevez des demandes structurées et qualifiées, réduisez votre charge administrative, améliorez votre visibilité numérique et pilotez vos adhésions depuis un dashboard centralisé.
               </p>
               <Button asChild size="lg" variant="secondary" className="w-full bg-white text-emerald-700 hover:bg-emerald-50 shadow-lg group-hover:scale-[1.02] transition-transform">
                 <Link href="/medical/register">
-                  Référencer mon service
+                  Rejoindre Oxygenial
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
