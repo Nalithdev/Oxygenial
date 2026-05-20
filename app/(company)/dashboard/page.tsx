@@ -4,13 +4,16 @@ import { Key, useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {useQuery, useMutation, useQueryClient} from "@tanstack/react-query";
 import {motion} from "motion/react";
-import {Calendar, Users, Building2, Clock, ChevronRight, Plus, Copy, Check} from "lucide-react";
+import {Calendar, Users, Building2, Clock, ChevronRight, Plus, Copy, Check, MessageSquare} from "lucide-react";
 import Link from "next/link";
-import {orpc} from "@/lib/orpc-client";
+import {orpc, orpcClient} from "@/lib/orpc-client";
 import {verticalFadeIn} from "@/lib/animations";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Badge} from "@/components/ui/badge";
+import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {Textarea} from "@/components/ui/textarea";
+import {Label} from "@/components/ui/label";
 import {DashboardLayout} from "./_components/dashboard-layout";
 import {useSession} from "@/lib/auth-client";
 
@@ -21,6 +24,8 @@ export default function DashboardPage() {
 
     const userId = session?.user?.id;
     const [copiedId, setCopiedId] = useState<string | null>(null);
+    const [showContactDialog, setShowContactDialog] = useState(false);
+    const [contactMessage, setContactMessage] = useState("");
 
     const statusQuery = useQuery(
         orpc.onboarding.getStatus.queryOptions({})
@@ -70,6 +75,22 @@ export default function DashboardPage() {
             },
         })
     );
+
+    const sendMessageMutation = useMutation({
+        mutationFn: async () => {
+            const medicalCompanyId = statusQuery.data?.clientCompany?.medicalCompany?.id;
+            if (!medicalCompanyId) throw new Error("Aucun SPSTI associé");
+            return orpcClient.conversation.sendMessage({
+                medicalCompanyId,
+                content: contactMessage.trim() || "Bonjour, je souhaite vous contacter.",
+            });
+        },
+        onSuccess: () => {
+            setShowContactDialog(false);
+            setContactMessage("");
+            router.push("/messages");
+        },
+    });
 
     const copyToClipboard = (token: string | null) => {
         const url = `${window.location.origin}/sign-up?invitation=${token}`;
@@ -165,6 +186,17 @@ export default function DashboardPage() {
                                     </p>
                                     <p className="text-sm text-slate-500">Service de santé</p>
                                 </div>
+                                {medicalCompany && (
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="gap-1.5 shrink-0"
+                                        onClick={() => setShowContactDialog(true)}
+                                    >
+                                        <MessageSquare className="w-3.5 h-3.5" />
+                                        Contacter
+                                    </Button>
+                                )}
                             </div>
                         </CardContent>
                     </Card>
@@ -358,6 +390,35 @@ export default function DashboardPage() {
                 </motion.div>
                 )}
             </motion.div>
+
+        <Dialog open={showContactDialog} onOpenChange={(open) => { setShowContactDialog(open); if (!open) setContactMessage(""); }}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Contacter {medicalCompany?.name}</DialogTitle>
+                    <DialogDescription>Envoyez un message pour initier la conversation</DialogDescription>
+                </DialogHeader>
+                <div className="space-y-2 py-4">
+                    <Label htmlFor="contact-msg">Message</Label>
+                    <Textarea
+                        id="contact-msg"
+                        value={contactMessage}
+                        onChange={(e) => setContactMessage(e.target.value)}
+                        placeholder="Bonjour, je souhaite vous contacter..."
+                        rows={4}
+                    />
+                </div>
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => setShowContactDialog(false)}>Annuler</Button>
+                    <Button
+                        onClick={() => sendMessageMutation.mutate()}
+                        disabled={sendMessageMutation.isPending}
+                        className="bg-blue-600 hover:bg-blue-700"
+                    >
+                        {sendMessageMutation.isPending ? "Envoi..." : "Envoyer"}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
 
         </DashboardLayout>
     );
