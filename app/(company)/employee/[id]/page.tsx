@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import {useParams, useRouter} from "next/navigation";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {motion} from "motion/react";
@@ -40,16 +40,10 @@ import {useSession} from "@/lib/auth-client";
 export default function EmployeeDetailPage() {
     const params = useParams();
     const router = useRouter();
-    const queryClient = useQueryClient();
     const employeeId = parseInt(params.id as string);
     const {data: session} = useSession();
 
     const userId = session?.user?.id;
-
-    const [isBookingDialogOpen, setIsBookingDialogOpen] = useState(false);
-    const [bookingDate, setBookingDate] = useState("");
-    const [bookingNotes, setBookingNotes] = useState("");
-    const [error, setError] = useState<string | null>(null);
 
     const employeeQuery = useQuery(
         orpc.employee.get.queryOptions({
@@ -74,8 +68,6 @@ export default function EmployeeDetailPage() {
         const isSelf = current.id === viewed.id;
 
         const isViewedEmployee = viewed.position === null;
-        const isViewedManager = viewed.position === "Manager";
-        const isViewedAdmin = viewed.position === "Administrateur";
 
         let canAccess = false;
 
@@ -98,25 +90,7 @@ export default function EmployeeDetailPage() {
         }
     }, [currentUserEmployeeQuery.data, employeeQuery.data, router]);
 
-    const createBookingMutation = useMutation({
-        mutationFn: async () => {
-            return orpcClient.booking.create({
-                employeeId,
-                scheduledAt: new Date(bookingDate).toISOString(),
-                notes: bookingNotes || undefined,
-            });
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries();
-            setIsBookingDialogOpen(false);
-            setBookingDate("");
-            setBookingNotes("");
-            setError(null);
-        },
-        onError: (error: Error) => {
-            setError(error.message);
-        },
-    });
+    
 
     const deleteEmployeeMutation = useMutation({
         mutationFn: async () => {
@@ -191,62 +165,7 @@ export default function EmployeeDetailPage() {
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <Dialog open={isBookingDialogOpen} onOpenChange={setIsBookingDialogOpen}>
-                                <DialogTrigger asChild>
-                                    <Button className="bg-gradient-to-r from-blue-600 to-indigo-600">
-                                        <Plus className="w-4 h-4 mr-2"/>
-                                        Planifier un RDV
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <DialogHeader>
-                                        <DialogTitle>Planifier un rendez-vous</DialogTitle>
-                                        <DialogDescription>
-                                            Créez un rendez-vous médical pour {employee.user?.name}
-                                        </DialogDescription>
-                                    </DialogHeader>
-
-                                    {error && (
-                                        <div
-                                            className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
-                                            {error}
-                                        </div>
-                                    )}
-
-                                    <div className="space-y-4 py-4">
-                                        <div className="space-y-2">
-                                            <Label htmlFor="date">Date et heure *</Label>
-                                            <Input
-                                                id="date"
-                                                type="datetime-local"
-                                                value={bookingDate}
-                                                onChange={(e) => setBookingDate(e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="notes">Notes</Label>
-                                            <Input
-                                                id="notes"
-                                                value={bookingNotes}
-                                                onChange={(e) => setBookingNotes(e.target.value)}
-                                                placeholder="Informations complémentaires..."
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <DialogFooter>
-                                        <Button variant="outline" onClick={() => setIsBookingDialogOpen(false)}>
-                                            Annuler
-                                        </Button>
-                                        <Button
-                                            onClick={() => createBookingMutation.mutate()}
-                                            disabled={createBookingMutation.isPending || !bookingDate}
-                                        >
-                                            {createBookingMutation.isPending ? "Création..." : "Créer le RDV"}
-                                        </Button>
-                                    </DialogFooter>
-                                </DialogContent>
-                            </Dialog>
+                            
 
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
