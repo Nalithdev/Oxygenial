@@ -6,6 +6,7 @@ import {
   timestamp,
   pgEnum,
   real,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 export * from './auth';
@@ -227,17 +228,21 @@ export const documentsRelations = relations(documentsTable, ({ one }) => ({
   }),
 }));
 
-export const conversationsTable = pgTable('conversations', {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  clientCompanyId: integer()
-    .references(() => clientCompaniesTable.id, { onDelete: 'cascade' })
-    .notNull(),
-  medicalCompanyId: integer()
-    .references(() => medicalCompaniesTable.id, { onDelete: 'cascade' })
-    .notNull(),
-  createdAt: timestamp().notNull().defaultNow(),
-  updatedAt: timestamp().notNull().defaultNow(),
-});
+export const conversationsTable = pgTable(
+  'conversations',
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    clientCompanyId: integer()
+      .references(() => clientCompaniesTable.id, { onDelete: 'cascade' })
+      .notNull(),
+    medicalCompanyId: integer()
+      .references(() => medicalCompaniesTable.id, { onDelete: 'cascade' })
+      .notNull(),
+    createdAt: timestamp().notNull().defaultNow(),
+    updatedAt: timestamp().notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('conversations_client_medical_idx').on(t.clientCompanyId, t.medicalCompanyId)],
+);
 
 export const messagesTable = pgTable('messages', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),

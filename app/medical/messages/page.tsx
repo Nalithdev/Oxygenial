@@ -33,7 +33,9 @@ export default function MedicalMessagesPage() {
     },
   });
 
-  const selected = conversationsQuery.data?.find((c) => c.id === selectedId);
+  type MedicalConversation = Extract<NonNullable<typeof conversationsQuery.data>[number], { clientCompany: unknown }>;
+  const conversations = (conversationsQuery.data ?? []) as MedicalConversation[];
+  const selected = conversations.find((c) => c.id === selectedId);
 
   return (
     <MedicalDashboardLayout>
@@ -55,7 +57,7 @@ export default function MedicalMessagesPage() {
                 <p className="text-sm">Aucune conversation</p>
               </div>
             ) : (
-              conversationsQuery.data?.map((conv) => {
+              conversations.map((conv) => {
                 const last = conv.messages[0];
                 return (
                   <button
@@ -139,6 +141,7 @@ export default function MedicalMessagesPage() {
                   onClick={() => sendMutation.mutate()}
                   disabled={!content.trim() || sendMutation.isPending}
                   className="self-end bg-emerald-600 hover:bg-emerald-700"
+                  aria-label="Envoyer le message"
                 >
                   <Send className="w-4 h-4" />
                 </Button>

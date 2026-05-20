@@ -15,7 +15,7 @@ export const sendMessage = authenticatedProcedure
     z.object({
       conversationId: z.number().optional(),
       medicalCompanyId: z.number().optional(),
-      content: z.string().min(1).max(2000),
+      content: z.string().trim().min(1).max(2000),
     }),
   )
   .handler(async ({ input, context }) => {
@@ -51,8 +51,20 @@ export const sendMessage = authenticatedProcedure
             clientCompanyId: employee.clientCompany.id,
             medicalCompanyId: input.medicalCompanyId,
           })
+          .onConflictDoNothing()
           .returning();
-        conversationId = created.id;
+
+        if (created) {
+          conversationId = created.id;
+        } else {
+          const race = await database.query.conversationsTable.findFirst({
+            where: and(
+              eq(conversationsTable.clientCompanyId, employee.clientCompany.id),
+              eq(conversationsTable.medicalCompanyId, input.medicalCompanyId!),
+            ),
+          });
+          conversationId = race!.id;
+        }
       }
     }
 

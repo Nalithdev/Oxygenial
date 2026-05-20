@@ -34,7 +34,6 @@ export const listMessages = authenticatedProcedure
 
     return database.query.messagesTable.findMany({
       where: (m, { eq }) => eq(m.conversationId, input.conversationId),
-      with: { sender: true },
       orderBy: (m, { asc }) => [asc(m.createdAt)],
     });
   });

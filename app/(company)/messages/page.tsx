@@ -33,7 +33,9 @@ export default function MessagesPage() {
     },
   });
 
-  const selected = conversationsQuery.data?.find((c) => c.id === selectedId);
+  type CompanyConversation = Extract<NonNullable<typeof conversationsQuery.data>[number], { medicalCompany: unknown }>;
+  const conversations = (conversationsQuery.data ?? []) as CompanyConversation[];
+  const selected = conversations.find((c) => c.id === selectedId);
 
   return (
     <DashboardLayout>
@@ -55,7 +57,7 @@ export default function MessagesPage() {
                 <p className="text-sm">Aucune conversation</p>
               </div>
             ) : (
-              conversationsQuery.data?.map((conv) => {
+              conversations.map((conv) => {
                 const last = conv.messages[0];
                 return (
                   <button
@@ -139,6 +141,7 @@ export default function MessagesPage() {
                   onClick={() => sendMutation.mutate()}
                   disabled={!content.trim() || sendMutation.isPending}
                   className="self-end bg-blue-600 hover:bg-blue-700"
+                  aria-label="Envoyer le message"
                 >
                   <Send className="w-4 h-4" />
                 </Button>
