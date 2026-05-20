@@ -1,11 +1,10 @@
 import { z } from 'zod';
-import { authenticatedProcedure } from '@/server/middleware/auth';
+import { medicalAdminProcedure } from '@/server/middleware/roles';
 import { database } from '@/db';
-import { medicalStaffTable, medicalCompaniesTable } from '@/db/schema/global';
+import { medicalCompaniesTable } from '@/db/schema/global';
 import { eq } from 'drizzle-orm';
-import { ORPCError } from '@orpc/server';
 
-export const updateMedicalCompany = authenticatedProcedure
+export const updateMedicalCompany = medicalAdminProcedure
   .input(
     z.object({
       name: z.string().min(1).max(255),
@@ -21,22 +20,6 @@ export const updateMedicalCompany = authenticatedProcedure
     }),
   )
   .handler(async ({ input, context }) => {
-    const staff = await database.query.medicalStaffTable.findFirst({
-      where: eq(medicalStaffTable.userId, context.user.id),
-    });
-
-    if (!staff) {
-      throw new ORPCError('NOT_FOUND', {
-        message: 'You are not associated with a medical company',
-      });
-    }
-
-    if (staff.role !== 'admin') {
-      throw new ORPCError('FORBIDDEN', {
-        message: 'Only admins can update the company profile',
-      });
-    }
-
     const [updated] = await database
       .update(medicalCompaniesTable)
       .set({
@@ -52,7 +35,7 @@ export const updateMedicalCompany = authenticatedProcedure
         coveragePostalCodes: input.coveragePostalCodes,
         updatedAt: new Date(),
       })
-      .where(eq(medicalCompaniesTable.id, staff.medicalCompanyId))
+      .where(eq(medicalCompaniesTable.id, context.medicalCompany.id))
       .returning();
 
     return updated;

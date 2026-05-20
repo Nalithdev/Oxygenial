@@ -30,8 +30,8 @@ export default function MedicalProfilPage() {
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { data, isPending } = useQuery(
-    orpc.medicalCompany.getMine.queryOptions({})
+  const { data, isPending, isError } = useQuery(
+    orpc.medicalCompany.getMy.queryOptions({})
   );
 
   const [form, setForm] = useState({
@@ -67,7 +67,7 @@ export default function MedicalProfilPage() {
   const updateMutation = useMutation({
     mutationFn: () => orpcClient.medicalCompany.update(form),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: orpc.medicalCompany.getMine.key() });
+      queryClient.invalidateQueries({ queryKey: orpc.medicalCompany.getMy.key() });
       setEditing(false);
       setError(null);
     },
@@ -100,6 +100,16 @@ export default function MedicalProfilPage() {
       <MedicalDashboardLayout>
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600" />
+        </div>
+      </MedicalDashboardLayout>
+    );
+  }
+
+  if (isError) {
+    return (
+      <MedicalDashboardLayout>
+        <div className="flex items-center justify-center h-64 text-slate-500">
+          <p>Impossible de charger les informations du SPSTI.</p>
         </div>
       </MedicalDashboardLayout>
     );

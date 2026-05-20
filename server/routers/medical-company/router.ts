@@ -7,7 +7,7 @@ import { updateMedicalCompany } from "./mutations/update-medical-company";
 export const medicalCompanyRouter = {
   list: listMedicalCompanies,
   get: getMedicalCompany,
-  getMine: getMyMedicalCompany,
+  getMy: getMyMedicalCompany,
   create: createMedicalCompany,
   update: updateMedicalCompany,
 };

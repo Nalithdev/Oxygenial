@@ -30,10 +30,10 @@ export default function MedicalDashboardPage() {
   const dashboardQuery = useQuery(orpc.medical.getDashboard.queryOptions({}));
 
   useEffect(() => {
-    if (!statusQuery.isPending && statusQuery.data?.type !== "medical_staff") {
+    if (statusQuery.isSuccess && statusQuery.data?.type !== "medical_staff") {
       router.push("/onboarding");
     }
-  }, [statusQuery.data, statusQuery.isPending, router]);
+  }, [statusQuery.isSuccess, statusQuery.data, router]);
 
   if (statusQuery.isPending || dashboardQuery.isPending) {
     return (
