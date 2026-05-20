@@ -60,9 +60,10 @@ export function Footer() {
           <div className="text-sm text-slate-500">
             © {new Date().getFullYear()} Oxygenial. Tous droits réservés.
           </div>
-          <div className="flex gap-6 text-sm text-slate-500">
-            <Link href="/privacy" className="hover:text-white transition-colors">Confidentialité</Link>
-            <Link href="/terms" className="hover:text-white transition-colors">Conditions</Link>
+          <div className="flex flex-col md:flex-row gap-4 text-sm text-slate-500">
+            <Link href="/legal/mentions-legales" className="hover:text-white transition-colors">Mentions légales</Link>
+            <Link href="/legal/conditions-utilisation" className="hover:text-white transition-colors">Conditions d’utilisation</Link>
+            <Link href="/legal/politique-confidentialite" className="hover:text-white transition-colors">Politique de confidentialité</Link>
           </div>
         </div>
       </div>
