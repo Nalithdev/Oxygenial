@@ -68,7 +68,14 @@
     "typescript": "^5.9.3"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["@prisma/client", "better-sqlite3", "esbuild", "msw", "sharp", "unrs-resolver"],
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "better-sqlite3",
+      "esbuild",
+      "msw",
+      "sharp",
+      "unrs-resolver"
+    ],
     "overrides": {
       "lodash": "4.17.23",
       "postcss": "8.5.10",
