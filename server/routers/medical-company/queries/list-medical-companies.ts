@@ -34,10 +34,10 @@ export const listMedicalCompanies = publicProcedure
       // Pour un code postal complet (5 chiffres), on utilise la géolocalisation.
       // Pour une saisie partielle, on garde le matching par préfixe.
       if (input.postalCode.length === 5) {
-        const nearbyPostalCodes = await getPostalCodesNearby(
+        const nearbyPostalCodes = (await getPostalCodesNearby(
           input.postalCode,
           input.radiusKm * 1000,
-        );
+        )).slice(0, 200);
         conditions.push(
           or(
             inArray(medicalCompaniesTable.postalCode, nearbyPostalCodes),

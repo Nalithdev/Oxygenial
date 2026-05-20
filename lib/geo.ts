@@ -1,3 +1,5 @@
+import "server-only";
+
 const GEO_API_BASE = "https://geo.api.gouv.fr";
 
 async function getCoordinatesForPostalCode(
