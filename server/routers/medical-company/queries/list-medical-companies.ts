@@ -2,13 +2,15 @@ import { z } from 'zod';
 import { publicProcedure } from '@/server/middleware/auth';
 import { database } from '@/db';
 import { medicalCompaniesTable } from '@/db/schema/global';
-import { like, or, sql } from 'drizzle-orm';
+import { inArray, like, or, sql } from 'drizzle-orm';
+import { getPostalCodesNearby } from '@/lib/geo';
 
 export const listMedicalCompanies = publicProcedure
   .input(
     z.object({
       search: z.string().optional(),
       postalCode: z.string().optional(),
+      radiusKm: z.number().min(1).max(100).default(30),
       sector: z.string().optional(),
       limit: z.number().min(1).max(100).default(20),
       offset: z.number().min(0).default(0),
@@ -29,15 +31,33 @@ export const listMedicalCompanies = publicProcedure
     }
 
     if (input.postalCode) {
-      conditions.push(
-        or(
-          like(medicalCompaniesTable.postalCode, `${input.postalCode}%`),
-          like(
-            medicalCompaniesTable.coveragePostalCodes,
-            `%${input.postalCode}%`,
+      // Pour un code postal complet (5 chiffres), on utilise la géolocalisation.
+      // Pour une saisie partielle, on garde le matching par préfixe.
+      if (input.postalCode.length === 5) {
+        const nearbyPostalCodes = (await getPostalCodesNearby(
+          input.postalCode,
+          input.radiusKm * 1000,
+        )).slice(0, 200);
+        conditions.push(
+          or(
+            inArray(medicalCompaniesTable.postalCode, nearbyPostalCodes),
+            like(
+              medicalCompaniesTable.coveragePostalCodes,
+              `%${input.postalCode}%`,
+            ),
           ),
-        ),
-      );
+        );
+      } else {
+        conditions.push(
+          or(
+            like(medicalCompaniesTable.postalCode, `${input.postalCode}%`),
+            like(
+              medicalCompaniesTable.coveragePostalCodes,
+              `%${input.postalCode}%`,
+            ),
+          ),
+        );
+      }
     }
 
     if (input.sector) {

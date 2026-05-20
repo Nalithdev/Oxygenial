@@ -13,6 +13,7 @@ import {
   ChevronRight,
   Search,
 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { orpc, orpcClient } from "@/lib/orpc-client";
 import { verticalFadeIn } from "@/lib/animations";
 import { Button } from "@/components/ui/button";
@@ -41,6 +42,7 @@ interface SearchMedicalStepProps {
 export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
   const [search, setSearch] = useState("");
   const [postalCode, setPostalCode] = useState("");
+  const [radiusKm, setRadiusKm] = useState(30);
   const [selectedCompany, setSelectedCompany] = useState<MedicalCompanyMarker | null>(null);
   const [requestTarget, setRequestTarget] = useState<MedicalCompanyMarker | null>(null);
   const [message, setMessage] = useState("");
@@ -51,6 +53,7 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
       input: {
         search: search || undefined,
         postalCode: postalCode || undefined,
+        radiusKm,
         limit: 100,
       },
     })
@@ -105,6 +108,24 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
             className="h-11"
           />
         </div>
+        {postalCode.length === 5 && (
+          <div className="w-32">
+            <Select
+              value={String(radiusKm)}
+              onValueChange={(v) => setRadiusKm(Number(v))}
+            >
+              <SelectTrigger className="h-11">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">10 km</SelectItem>
+                <SelectItem value="30">30 km</SelectItem>
+                <SelectItem value="50">50 km</SelectItem>
+                <SelectItem value="100">100 km</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
       </div>
 
       {/* Map + Sidebar layout */}
@@ -131,7 +152,6 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
               onSelect={setSelectedCompany}
             />
           )}
-
         </div>
 
         {/* Sidebar */}
@@ -143,7 +163,6 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
             transition={{ duration: 0.2 }}
             className="w-80 bg-white border border-slate-200 rounded-xl shadow-lg flex flex-col overflow-hidden"
           >
-            {/* Header */}
             <div className="flex items-start justify-between p-4 border-b border-slate-100">
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-slate-900 text-sm leading-tight truncate">
@@ -164,21 +183,18 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
               </button>
             </div>
 
-            {/* Body */}
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {selectedCompany.description && (
                 <p className="text-xs text-slate-600 leading-relaxed">
                   {selectedCompany.description}
                 </p>
               )}
-
               {selectedCompany.address && (
                 <div className="flex items-start gap-2 text-xs text-slate-600">
                   <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0 text-slate-400" />
                   <span>{selectedCompany.address}</span>
                 </div>
               )}
-
               {selectedCompany.phone && (
                 <div className="flex items-center gap-2 text-xs text-slate-600">
                   <Phone className="w-3.5 h-3.5 shrink-0 text-slate-400" />
@@ -187,7 +203,6 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
                   </a>
                 </div>
               )}
-
               {selectedCompany.email && (
                 <div className="flex items-center gap-2 text-xs text-slate-600">
                   <Mail className="w-3.5 h-3.5 shrink-0 text-slate-400" />
@@ -196,7 +211,6 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
                   </a>
                 </div>
               )}
-
               {selectedCompany.sectors && (
                 <div className="pt-1">
                   <p className="text-xs font-medium text-slate-700 mb-1.5">Secteurs couverts</p>
@@ -214,7 +228,6 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
               )}
             </div>
 
-            {/* CTA */}
             <div className="p-4 border-t border-slate-100">
               <Button
                 className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-sm h-9"
@@ -228,7 +241,7 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
         )}
       </div>
 
-      {/* List of SPSTIs without coordinates */}
+      {/* SPSTIs sans coordonnées */}
       {withoutCoords.length > 0 && (
         <div className="space-y-2">
           <p className="text-xs text-slate-500 font-medium">
@@ -261,13 +274,11 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
               Envoyez une demande d&apos;adhésion à {requestTarget?.name}
             </DialogDescription>
           </DialogHeader>
-
           {error && (
             <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
               {error}
             </div>
           )}
-
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="message">Message (optionnel)</Label>
@@ -280,7 +291,6 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
               />
             </div>
           </div>
-
           <DialogFooter>
             <Button variant="outline" onClick={() => setRequestTarget(null)}>
               Annuler
