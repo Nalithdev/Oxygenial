@@ -8,6 +8,7 @@ import {
 } from '@/db/schema/global';
 import { ORPCError } from '@orpc/server';
 import { eq } from 'drizzle-orm';
+import { geocodeAddress } from '@/lib/geocode';
 
 export const createMedicalCompany = authenticatedProcedure
   .input(
@@ -46,6 +47,8 @@ export const createMedicalCompany = authenticatedProcedure
       });
     }
 
+    const coords = await geocodeAddress(input.address, input.postalCode, input.city);
+
     const [medicalCompany] = await database
       .insert(medicalCompaniesTable)
       .values({
@@ -59,6 +62,8 @@ export const createMedicalCompany = authenticatedProcedure
         website: input.website,
         sectors: input.sectors,
         coveragePostalCodes: input.coveragePostalCodes,
+        latitude: coords?.latitude,
+        longitude: coords?.longitude,
       })
       .returning();
 
