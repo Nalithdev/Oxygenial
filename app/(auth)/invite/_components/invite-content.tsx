@@ -128,7 +128,7 @@ export function InviteContent() {
           Bienvenue dans l&apos;équipe !
         </h1>
         <p className="text-slate-600">
-          Vous avez été invité à rejoindre Oxygenial
+          Vous avez été invité à rejoindre Medli'
         </p>
       </motion.div>
 

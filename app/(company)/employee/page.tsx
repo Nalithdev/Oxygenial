@@ -113,7 +113,7 @@ export default function EmployeesPage() {
               <DialogHeader>
                 <DialogTitle>Ajouter un employé</DialogTitle>
                 <DialogDescription>
-                  L&apos;employé doit avoir un compte Oxygenial pour être ajouté
+                  L'employé doit avoir un compte Medli' pour être ajouté
                 </DialogDescription>
               </DialogHeader>
 

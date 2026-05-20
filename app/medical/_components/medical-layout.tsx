@@ -55,7 +55,7 @@ export function MedicalDashboardLayout({ children }: MedicalLayoutProps) {
                 <div className="w-8 h-8 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-lg flex items-center justify-center">
                   <Stethoscope className="w-5 h-5 text-white" />
                 </div>
-                <span className="font-bold text-slate-900">Oxygenial</span>
+                <span className="font-bold text-slate-900">Medli'</span>
                 <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
                   Médical
                 </span>

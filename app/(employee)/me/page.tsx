@@ -66,7 +66,7 @@ export default function EmployeePersonalPage() {
               <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
                 <Building2 className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-slate-900">Oxygenial</span>
+              <span className="font-bold text-slate-900">Medli'</span>
             </Link>
 
             <Button

@@ -39,7 +39,7 @@ export default async function AuthLayout({
                 />
               </svg>
             </div>
-            Oxygenial
+            Medli'
           </Link>
 
           <div className="space-y-6">
@@ -49,7 +49,7 @@ export default async function AuthLayout({
               <span className="text-white/80">simplifiée pour tous.</span>
             </h2>
             <p className="text-lg text-white/70 max-w-md leading-relaxed">
-              Rejoignez des milliers d&apos;entreprises qui font confiance à Oxygenial pour gérer leurs obligations de santé au travail.
+              Rejoignez des milliers d'entreprises qui font confiance à Medli' pour gérer leurs obligations de santé au travail.
             </p>
           </div>
 

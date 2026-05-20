@@ -33,7 +33,7 @@ export default function OnboardingPage() {
           className="text-center mb-12"
         >
           <h1 className="text-3xl font-bold text-slate-900 mb-2">
-            Bienvenue sur Oxygenial
+            Bienvenue sur Medli'
           </h1>
           <p className="text-slate-600">
             Configurez votre entreprise en quelques étapes

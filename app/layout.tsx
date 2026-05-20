@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Oxygenial - La santé au travail, simplifiée",
+  title: "Medli' - La santé au travail, simplifiée",
   description: "L'annuaire de référence pour les TPE et PME françaises à la recherche d'un service de santé au travail.",
 };
 

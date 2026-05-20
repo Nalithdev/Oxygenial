@@ -24,7 +24,7 @@ export function MobileLogo() {
             />
           </svg>
         </div>
-        Oxygenial
+        Medli'
       </Link>
     </div>
   );

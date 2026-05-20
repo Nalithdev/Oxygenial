@@ -5,42 +5,42 @@ import { verticalFadeIn } from "@/lib/animations";
 import { Search, FileCheck, Calendar, Users, Shield, Zap } from "lucide-react";
 
 const features = [
-  {
-    icon: Search,
-    title: "Recherche intelligente",
-    description: "Trouvez les services de santé au travail par code postal, secteur d&apos;activité ou couverture géographique.",
-    color: "bg-blue-100 text-blue-600",
-  },
-  {
-    icon: FileCheck,
-    title: "Demande d&apos;adhésion",
-    description: "Envoyez votre demande directement en ligne et suivez son avancement en temps réel.",
-    color: "bg-emerald-100 text-emerald-600",
-  },
-  {
-    icon: Calendar,
-    title: "Gestion des rendez-vous",
-    description: "Planifiez les visites médicales de vos employés et recevez des rappels automatiques.",
-    color: "bg-violet-100 text-violet-600",
-  },
-  {
-    icon: Users,
-    title: "Suivi des employés",
-    description: "Centralisez les informations de santé de vos équipes et gérez leurs documents.",
-    color: "bg-amber-100 text-amber-600",
-  },
-  {
-    icon: Shield,
-    title: "Conformité garantie",
-    description: "Restez en règle avec vos obligations légales de suivi médical au travail.",
-    color: "bg-rose-100 text-rose-600",
-  },
-  {
-    icon: Zap,
-    title: "Tableau de bord",
-    description: "Visualisez les prochains rendez-vous, les documents et l&apos;état de vos démarches.",
-    color: "bg-indigo-100 text-indigo-600",
-  },
+    {
+        icon: Search,
+        title: "Matching intelligent",
+        description: "Renseignez votre secteur, votre effectif et votre localisation. Medli' identifie les SPSTI les plus compatibles avec votre situation réelle.",
+        color: "bg-blue-100 text-blue-600",
+    },
+    {
+        icon: FileCheck,
+        title: "Demandes qualifiées",
+        description: "Votre dossier arrive structuré chez le SPSTI : raison sociale, secteur, effectif, besoins. Fini les échanges répétitifs pour reconstituer des informations de base.",
+        color: "bg-emerald-100 text-emerald-600",
+    },
+    {
+        icon: Calendar,
+        title: "Onboarding fluidifié",
+        description: "Le processus d'adhésion se déclenche dans un environnement numérique structuré, sans ressaisie manuelle ni échange de documents papier.",
+        color: "bg-violet-100 text-violet-600",
+    },
+    {
+        icon: Users,
+        title: "Dashboard SPSTI",
+        description: "Pilotez vos demandes entrantes, suivez votre attractivité et accédez aux analytics de votre activité sur la plateforme.",
+        color: "bg-amber-100 text-amber-600",
+    },
+    {
+        icon: Shield,
+        title: "Obligations légales claires",
+        description: "Comprenez immédiatement vos obligations selon votre effectif et votre secteur, sans avoir besoin d'un expert RH pour les interpréter.",
+        color: "bg-rose-100 text-rose-600",
+    },
+    {
+        icon: Zap,
+        title: "Visibilité numérique",
+        description: "Les SPSTI disposent d'une vitrine structurée et accessible, sans avoir à investir dans un site ou une stratégie SEO propre.",
+        color: "bg-indigo-100 text-indigo-600",
+    },
 ];
 
 export function Features() {
@@ -58,7 +58,7 @@ export function Features() {
             Tout ce dont vous avez besoin
           </motion.h2>
           <motion.p variants={verticalFadeIn} className="text-slate-600 text-lg">
-            Une plateforme conçue pour faciliter la vie des dirigeants de TPE et PME.
+              Des outils dédiés aux entreprises qui cherchent, et aux SPSTI qui accueillent.
           </motion.p>
         </motion.div>
 
