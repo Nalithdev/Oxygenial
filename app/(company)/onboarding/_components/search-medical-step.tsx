@@ -3,6 +3,7 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import {
   MapPin,
@@ -12,6 +13,7 @@ import {
   X,
   ChevronRight,
   Search,
+  MessageSquare,
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { orpc, orpcClient } from "@/lib/orpc-client";
@@ -40,11 +42,14 @@ interface SearchMedicalStepProps {
 }
 
 export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [radiusKm, setRadiusKm] = useState(30);
   const [selectedCompany, setSelectedCompany] = useState<MedicalCompanyMarker | null>(null);
   const [requestTarget, setRequestTarget] = useState<MedicalCompanyMarker | null>(null);
+  const [contactTarget, setContactTarget] = useState<MedicalCompanyMarker | null>(null);
+  const [contactMessage, setContactMessage] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -58,6 +63,21 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
       },
     })
   );
+
+  const sendMessageMutation = useMutation({
+    mutationFn: async () => {
+      if (!contactTarget) throw new Error("Aucun SPSTI sélectionné");
+      return orpcClient.conversation.sendMessage({
+        medicalCompanyId: contactTarget.id,
+        content: contactMessage.trim() || "Bonjour, je souhaite vous contacter.",
+      });
+    },
+    onSuccess: () => {
+      setContactTarget(null);
+      setContactMessage("");
+      router.push("/messages");
+    },
+  });
 
   const createRequestMutation = useMutation({
     mutationFn: async () => {
@@ -228,7 +248,15 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
               )}
             </div>
 
-            <div className="p-4 border-t border-slate-100">
+            <div className="p-4 border-t border-slate-100 space-y-2">
+              <Button
+                variant="outline"
+                className="w-full text-sm h-9 gap-2"
+                onClick={() => setContactTarget(selectedCompany)}
+              >
+                <MessageSquare className="w-4 h-4" />
+                Contacter
+              </Button>
               <Button
                 className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-sm h-9"
                 onClick={() => setRequestTarget(selectedCompany)}
@@ -264,6 +292,42 @@ export function SearchMedicalStep({ onSuccess }: SearchMedicalStepProps) {
           ))}
         </div>
       )}
+
+      {/* Dialog contacter */}
+      <Dialog open={!!contactTarget} onOpenChange={() => { setContactTarget(null); setContactMessage(""); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Contacter {contactTarget?.name}</DialogTitle>
+            <DialogDescription>
+              Envoyez un message pour initier la conversation
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="contact-message">Message</Label>
+              <Textarea
+                id="contact-message"
+                value={contactMessage}
+                onChange={(e) => setContactMessage(e.target.value)}
+                placeholder="Bonjour, je souhaite vous contacter..."
+                rows={4}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setContactTarget(null); setContactMessage(""); }}>
+              Annuler
+            </Button>
+            <Button
+              onClick={() => sendMessageMutation.mutate()}
+              disabled={sendMessageMutation.isPending}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              {sendMessageMutation.isPending ? "Envoi..." : "Envoyer"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Dialog demande */}
       <Dialog open={!!requestTarget} onOpenChange={() => setRequestTarget(null)}>
