@@ -31,6 +31,7 @@ const navigation = [
   { name: "Entreprises", href: "/medical/company", icon: Building2 },
   { name: "Mon SPSTI", href: "/medical/profil", icon: UserCog },
   { name: "Messages", href: "/medical/messages", icon: MessageSquare },
+  { name: "Rendez-vous", href: "/medical/appointments", icon: Stethoscope },
 ];
 
 interface MedicalLayoutProps {

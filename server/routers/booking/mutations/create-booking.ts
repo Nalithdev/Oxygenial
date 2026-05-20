@@ -1,51 +1,60 @@
 import { z } from 'zod';
-import { companyAdminProcedure } from '@/server/middleware/roles';
+import { medicalStaffProcedure } from '@/server/middleware/roles';
 import { database } from '@/db';
-import { bookingsTable, employeesTable } from '@/db/schema/global';
+import {
+  bookingsTable,
+  clientCompaniesTable,
+  employeesTable,
+} from '@/db/schema/global';
 import { eq, and } from 'drizzle-orm';
 import { ORPCError } from '@orpc/server';
 
-export const createBooking = companyAdminProcedure
+// Nouveau flux : le rendez-vous est "proposé" (pending) par défaut, l'entreprise devra accepter/refuser
+export const createBooking = medicalStaffProcedure
   .input(
     z.object({
+      companyId: z.number(),
       employeeId: z.number(),
       scheduledAt: z.string().datetime(),
       notes: z.string().optional(),
     }),
   )
   .handler(async ({ input, context }) => {
-    if (!context.clientCompany) {
-      throw new ORPCError('NOT_FOUND', {
-        message: 'Company not found',
+    // Vérifie que l'entreprise est bien cliente du SPSTI du staff médical
+    const clientCompany = await database.query.clientCompaniesTable.findFirst({
+      where: and(
+        eq(clientCompaniesTable.id, input.companyId),
+        eq(clientCompaniesTable.medicalCompanyId, context.medicalCompany.id),
+      ),
+    });
+    if (!clientCompany) {
+      throw new ORPCError('FORBIDDEN', {
+        message: 'This company is not a client of your medical organization',
       });
     }
 
-    if (!context.clientCompany.medicalCompanyId) {
-      throw new ORPCError('BAD_REQUEST', {
-        message: 'Your company is not linked to a medical service',
-      });
-    }
-
+    // Vérifie que l'employé appartient bien à cette entreprise
     const employee = await database.query.employeesTable.findFirst({
       where: and(
         eq(employeesTable.id, input.employeeId),
-        eq(employeesTable.clientCompanyId, context.clientCompany.id),
+        eq(employeesTable.clientCompanyId, input.companyId),
       ),
     });
-
     if (!employee) {
       throw new ORPCError('NOT_FOUND', {
-        message: 'Employee not found',
+        message: 'Employee not found in this company',
       });
     }
 
+    // Par défaut, le rendez-vous est en attente d'acceptation (pending)
     const [booking] = await database
       .insert(bookingsTable)
       .values({
-        employeeId: input.employeeId,
-        medicalCompanyId: context.clientCompany.medicalCompanyId,
+        employeeId: employee.id,
+        medicalCompanyId: context.medicalCompany.id,
         scheduledAt: new Date(input.scheduledAt),
         notes: input.notes,
+        status: 'pending',
       })
       .returning();
 

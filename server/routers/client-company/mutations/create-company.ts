@@ -9,7 +9,7 @@ export const createCompany = authenticatedProcedure
   .input(
     z.object({
       name: z.string().min(1).max(255),
-      siret: z.string().length(14).optional(),
+      siret: z.string().min(9).max(14).optional(),
       address: z.string().max(500).optional(),
       postalCode: z.string().max(10).optional(),
       city: z.string().max(255).optional(),
