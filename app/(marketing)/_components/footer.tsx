@@ -14,7 +14,7 @@ export function Footer() {
               <span className="text-xl font-bold">Oxygenial</span>
             </Link>
             <p className="text-slate-400 leading-relaxed max-w-sm">
-              L&apos;annuaire de référence pour les TPE et PME françaises à la recherche d&apos;un service de santé au travail.
+              Comprenez vos obligations, identifiez les SPSTI compatibles avec votre secteur et votre localisation, et initiez votre démarche d'adhésion en quelques minutes sans expertise RH requise.
             </p>
           </div>
 
@@ -44,7 +44,7 @@ export function Footer() {
             <ul className="space-y-2 text-slate-400">
               <li>
                 <Link href="/medical/register" className="hover:text-white transition-colors">
-                  Référencer mon service
+                  Rejoindre Oxygenial
                 </Link>
               </li>
               <li>
