@@ -16,6 +16,7 @@ export const updateMedicalCompany = medicalAdminProcedure
       email: z.string().email().optional(),
       website: z.string().max(255).optional(),
       sectors: z.string().optional(),
+      services: z.string().optional(),
       coveragePostalCodes: z.string().optional(),
     }),
   )
@@ -32,6 +33,7 @@ export const updateMedicalCompany = medicalAdminProcedure
         email: input.email,
         website: input.website,
         sectors: input.sectors,
+        services: input.services,
         coveragePostalCodes: input.coveragePostalCodes,
         updatedAt: new Date(),
       })

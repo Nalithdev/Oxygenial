@@ -97,11 +97,11 @@ export function MedicalDashboardLayout({ children }: MedicalLayoutProps) {
                     <p className="text-slate-500 truncate">{session?.user?.email}</p>
                   </div>
                   <DropdownMenuSeparator />
-                  <Link href={'/profil'}>
+                  <Link href={'/medical/profil'}>
                     <DropdownMenuItem
                       className="cursor-pointer"
                     >
-                      Profil
+                      Mon SPSTI
                     </DropdownMenuItem>
                   </Link>
 
