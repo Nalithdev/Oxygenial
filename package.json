@@ -49,6 +49,7 @@
   },
   "devDependencies": {
     "@better-auth/cli": "^1.4.6",
+    "@neondatabase/serverless": "^1.1.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "^20.19.26",
     "@types/pg": "^8.16.0",
